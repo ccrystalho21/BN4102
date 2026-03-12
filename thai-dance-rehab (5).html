@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>รำไทย — Thai Dance Rehabilitation</title>
+
+  <!-- TensorFlow.js and Pose Detection -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@2.1.3/dist/pose-detection.min.js"></script>
+
+  <!-- Google Fonts -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,700;1,300&family=Noto+Serif+Thai:wght@300;400;700&display=swap');
+  </style>
+
+  <style>
+    /* ================================================================
+       RESET & CSS VARIABLES
+       ================================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --gold:        #c9a84c;
+      --gold-light:  #e8d48b;
+      --gold-glow:   rgba(201, 168, 76, 0.3);
+      --deep-red:    #8b1a1a;
+      --temple-brown:#2a1810;
+      --dark:        #0f0a06;
+      --cream:       #f5ead0;
+      --cream-dim:   #bfab88;
+      --lotus-pink:  #e8a0b4;
+      --lotus-deep:  #c4597a;
+      --jade:        #5a9e7a;
+      --jade-dim:    #3a6e52;
+      --radius:      12px;
+    }
+
+    /* ================================================================
+       BODY & BACKGROUND
+       ================================================================ */
+    body {
+      font-family: 'Cormorant Garamond', serif;
+      background: var(--dark);
+      color: var(--cream);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 30%, rgba(139,26,26,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 90%, rgba(201,168,76,0.04) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .thai-border-top {
+      height: 4px;
+      background: linear-gradient(90deg,
+        transparent 0%, var(--gold) 15%, var(--gold-light) 30%,
+        var(--gold) 50%, var(--gold-light) 70%, var(--gold) 85%, transparent 100%);
+      opacity: 0.7;
+    }
+
+    /* ================================================================
+       MODE SELECTION SCREEN
+       ================================================================ */
+    .mode-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--dark);
+      transition: opacity 0.6s, visibility 0.6s;
+    }
+
+    .mode-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .mode-header {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: fadeUp 0.8s ease-out;
+    }
+
+    .mode-header .lotus-big {
+      font-size: 56px;
+      display: block;
+      margin-bottom: 16px;
+      animation: float-gentle 3s ease-in-out infinite;
+    }
+
+    .mode-header h1 {
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--gold);
+      text-shadow: 0 0 30px var(--gold-glow);
+      margin-bottom: 8px;
+    }
+
+    .mode-header p {
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--cream-dim);
+      letter-spacing: 2px;
+    }
+
+    .mode-cards {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 900px;
+      padding: 0 20px;
+    }
+
+    .mode-card {
+      width: 260px;
+      background: rgba(42, 24, 16, 0.6);
+      border: 1px solid rgba(201, 168, 76, 0.15);
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.35s ease;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.8s ease-out both;
+    }
+
+    .mode-card:nth-child(1) { animation-delay: 0.1s; }
+    .mode-card:nth-child(2) { animation-delay: 0.25s; }
+    .mode-card:nth-child(3) { animation-delay: 0.4s; }
+
+    .mode-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+
+    .mode-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px rgba(201, 168, 76, 0.12);
+    }
+
+    .mode-card:hover::before { opacity: 1; }
+
+    .mode-card .mode-icon { font-size: 40px; margin-bottom: 16px; display: block; }
+    .mode-card .mode-name { font-size: 20px; font-weight: 700; color: var(--gold-light); margin-bottom: 8px; position: relative; }
+    .mode-card .mode-desc { font-size: 14px; font-weight: 300; color: var(--cream-dim); line-height: 1.6; position: relative; }
+
+    .mode-card .mode-tag {
+      display: inline-block;
+      margin-top: 16px;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(201, 168, 76, 0.2);
+      color: var(--cream-dim);
+      position: relative;
+    }
+
+
+    /* ================================================================
+       CALIBRATION SCREEN
+       ================================================================
+       Full-screen overlay that guides the user through sitting and
+       standing calibration before the game starts.
+    */
+    .calibration-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 10, 6, 0.65);
+      transition: opacity 0.5s, visibility 0.5s;
+    }
+
+    .calibration-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .calib-content {
+      text-align: center;
+      max-width: 500px;
+      padding: 0 24px;
+    }
+
+    .calib-icon {
+      font-size: 40px;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .calib-title {
+      font-size: 22px;
+      font-weight: 300;
+      color: var(--gold-light);
+      margin-bottom: 8px;
+      line-height: 1.3;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+    }
+
+    .calib-instruction {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.5;
+      margin-bottom: 16px;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.8);
+    }
+
+    .calib-countdown {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 3px solid rgba(201, 168, 76, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      position: relative;
+    }
+
+    .calib-countdown-num {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--gold);
+      text-shadow: 0 0 20px var(--gold-glow);
+    }
+
+    .calib-countdown-ring {
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: var(--gold);
+      animation: spin 1s linear infinite;
+    }
+
+    .calib-progress-text {
+      font-size: 13px;
+      color: var(--cream-dim);
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    .calib-values {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .calib-val-item {
+      text-align: center;
+    }
+
+    .calib-val-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--cream-dim);
+      margin-bottom: 4px;
+    }
+
+    .calib-val-num {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .calib-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      padding: 12px 36px;
+      border-radius: 999px;
+      border: 1px solid var(--gold);
+      background: transparent;
+      color: var(--gold);
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 16px;
+    }
+
+    .calib-btn:hover {
+      background: var(--gold);
+      color: var(--dark);
+      box-shadow: 0 0 30px var(--gold-glow);
+    }
+
+    .calib-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Calibration complete results */
+    .calib-results {
+      margin-top: 24px;
+      padding: 20px;
+      background: rgba(42, 24, 16, 0.5);
+      border: 1px solid rgba(201, 168, 76, 0.15);
+      border-radius: var(--radius);
+    }
+
+    .calib-results h4 {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--gold);
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+
+    .calib-result-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 14px;
+    }
+
+    .calib-result-row .label { color: var(--cream-dim); font-weight: 300; }
+    .calib-result-row .value { color: var(--cream); font-weight: 700; }
+
+    .calib-status {
+      font-size: 14px;
+      color: var(--jade);
+      margin-top: 12px;
+      font-style: italic;
+    }
+
+
+    /* ================================================================
+       HEADER BAR
+       ================================================================ */
+    header {
+      position: relative;
+      z-index: 1;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+    }
+
+    .logo { display: flex; align-items: baseline; gap: 12px; }
+
+    .logo-thai {
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--gold);
+      text-shadow: 0 0 20px var(--gold-glow);
+    }
+
+    .logo-en { font-size: 12px; font-weight: 300; letter-spacing: 3px; text-transform: uppercase; color: var(--cream-dim); }
+
+    .header-right { display: flex; align-items: center; gap: 16px; }
+
+    .status-pill {
+      font-size: 11px; font-weight: 500; padding: 5px 14px; border-radius: 999px;
+      border: 1px solid rgba(201, 168, 76, 0.2); color: var(--cream-dim);
+      display: flex; align-items: center; gap: 7px; letter-spacing: 1px;
+    }
+
+    .status-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cream-dim); transition: all 0.4s; }
+    .status-pill.active { border-color: var(--jade-dim); color: var(--jade); }
+    .status-pill.active .dot { background: var(--jade); box-shadow: 0 0 10px var(--jade); }
+
+    .music-controls { display: flex; align-items: center; gap: 8px; }
+
+    .music-btn {
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 1px solid rgba(201, 168, 76, 0.2); background: transparent;
+      color: var(--gold); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: all 0.25s;
+    }
+
+    .music-btn:hover { border-color: var(--gold); background: rgba(201, 168, 76, 0.1); }
+    .music-btn.muted { opacity: 0.3; }
+
+    .vol-slider {
+      width: 70px; -webkit-appearance: none; height: 3px;
+      border-radius: 3px; background: rgba(201, 168, 76, 0.15); outline: none;
+    }
+
+    .vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 12px; height: 12px;
+      border-radius: 50%; background: var(--gold); cursor: pointer;
+    }
+
+    .mode-badge {
+      font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 999px;
+      border: 1px solid rgba(201, 168, 76, 0.15); color: var(--cream-dim);
+      cursor: pointer; transition: all 0.25s;
+    }
+
+    .mode-badge:hover { border-color: var(--gold); color: var(--gold); }
+
+
+    /* ================================================================
+       MAIN LAYOUT
+       ================================================================ */
+    main {
+      position: relative; z-index: 1; max-width: 1100px; margin: 0 auto;
+      padding: 24px 20px; display: grid; grid-template-columns: 1fr 280px; gap: 20px;
+    }
+
+    @media (max-width: 860px) { main { grid-template-columns: 1fr; max-width: 600px; } }
+
+
+    /* ================================================================
+       VIDEO CONTAINER
+       ================================================================ */
+    .video-container {
+      position: relative; border-radius: var(--radius); overflow: hidden;
+      aspect-ratio: 4/3; background: var(--temple-brown);
+      border: 2px solid rgba(201, 168, 76, 0.2);
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+      transition: border-color 0.5s, box-shadow 0.5s;
+    }
+
+    .video-container.standing {
+      border-color: var(--lotus-deep);
+      box-shadow: 0 0 50px rgba(232, 160, 180, 0.15), 0 8px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .video-container.sitting { border-color: rgba(90, 158, 122, 0.3); }
+
+    .corner-ornament { position: absolute; width: 36px; height: 36px; z-index: 3; pointer-events: none; }
+    .corner-ornament::before, .corner-ornament::after { content: ''; position: absolute; background: var(--gold); opacity: 0.4; }
+    .corner-ornament.tl { top: -1px; left: -1px; }
+    .corner-ornament.tl::before { top: 0; left: 0; width: 20px; height: 2px; }
+    .corner-ornament.tl::after  { top: 0; left: 0; width: 2px; height: 20px; }
+    .corner-ornament.tr { top: -1px; right: -1px; }
+    .corner-ornament.tr::before { top: 0; right: 0; width: 20px; height: 2px; }
+    .corner-ornament.tr::after  { top: 0; right: 0; width: 2px; height: 20px; }
+    .corner-ornament.bl { bottom: -1px; left: -1px; }
+    .corner-ornament.bl::before { bottom: 0; left: 0; width: 20px; height: 2px; }
+    .corner-ornament.bl::after  { bottom: 0; left: 0; width: 2px; height: 20px; }
+    .corner-ornament.br { bottom: -1px; right: -1px; }
+    .corner-ornament.br::before { bottom: 0; right: 0; width: 20px; height: 2px; }
+    .corner-ornament.br::after  { bottom: 0; right: 0; width: 2px; height: 20px; }
+
+    video, #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+    #overlay { pointer-events: none; }
+
+    .start-screen {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 16px; z-index: 5;
+      background: radial-gradient(ellipse at center, rgba(42,24,16,0.95), rgba(15,10,6,0.98));
+    }
+
+    .start-screen .lotus-icon { font-size: 44px; animation: float-gentle 3s ease-in-out infinite; }
+    .start-screen .start-title { font-size: 24px; font-weight: 300; color: var(--gold-light); }
+    .start-screen .start-subtitle { font-size: 13px; color: var(--cream-dim); font-weight: 300; letter-spacing: 1px; text-align: center; max-width: 260px; }
+
+    .start-btn {
+      font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 500;
+      letter-spacing: 2px; padding: 12px 36px; border-radius: 999px;
+      border: 1px solid var(--gold); background: transparent; color: var(--gold);
+      cursor: pointer; transition: all 0.3s;
+    }
+
+    .start-btn:hover { background: var(--gold); color: var(--dark); box-shadow: 0 0 30px var(--gold-glow); }
+    .start-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .dance-prompt {
+      position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 4;
+      font-size: 16px; font-weight: 300; font-style: italic; color: var(--gold-light);
+      text-shadow: 0 2px 12px rgba(0,0,0,0.8); padding: 8px 24px;
+      background: rgba(15,10,6,0.6); backdrop-filter: blur(8px); border-radius: 999px;
+      border: 1px solid rgba(201,168,76,0.15); white-space: nowrap;
+      opacity: 0; transition: opacity 0.5s; pointer-events: none;
+    }
+    .dance-prompt.show { opacity: 1; }
+
+    .petal-container { position: absolute; inset: 0; pointer-events: none; z-index: 3; overflow: hidden; }
+    .petal { position: absolute; font-size: 24px; opacity: 0; animation: petal-fall 3s ease-in forwards; }
+
+    @keyframes petal-fall {
+      0%   { opacity: 0.9; transform: translateY(-20px) rotate(0deg) scale(1); }
+      100% { opacity: 0;   transform: translateY(300px) rotate(120deg) scale(0.5); }
+    }
+
+    .level-complete {
+      position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: rgba(15,10,6,0.85); backdrop-filter: blur(12px);
+      opacity: 0; pointer-events: none; transition: opacity 0.6s;
+    }
+    .level-complete.show { opacity: 1; pointer-events: auto; }
+    .level-complete .congrats { font-size: 32px; font-weight: 300; color: var(--gold-light); margin-bottom: 8px; }
+    .level-complete .level-done-name { font-size: 14px; color: var(--cream-dim); letter-spacing: 2px; margin-bottom: 20px; }
+
+    .level-complete .next-btn {
+      font-family: 'Cormorant Garamond', serif; font-size: 14px; padding: 10px 32px;
+      border-radius: 999px; border: 1px solid var(--gold); background: transparent;
+      color: var(--gold); cursor: pointer; transition: all 0.3s; letter-spacing: 1px;
+    }
+    .level-complete .next-btn:hover { background: var(--gold); color: var(--dark); }
+
+    .rhythm-ring {
+      position: absolute; top: 16px; right: 16px; width: 50px; height: 50px;
+      border-radius: 50%; border: 2px solid rgba(201,168,76,0.2); z-index: 4;
+      display: flex; align-items: center; justify-content: center; font-size: 20px;
+      pointer-events: none; opacity: 0; transition: opacity 0.3s;
+    }
+    .rhythm-ring.show { opacity: 1; }
+    .rhythm-ring.beat { border-color: var(--gold); box-shadow: 0 0 20px var(--gold-glow); animation: ring-pulse 0.6s ease-out; }
+
+    @keyframes ring-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+
+
+    /* ================================================================
+       SIDE PANEL & CARDS
+       ================================================================ */
+    .panel { display: flex; flex-direction: column; gap: 14px; }
+
+    .card {
+      background: rgba(42, 24, 16, 0.5); border: 1px solid rgba(201, 168, 76, 0.12);
+      border-radius: var(--radius); padding: 20px; backdrop-filter: blur(4px);
+    }
+    .card h3 { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 2.5px; color: var(--gold); margin-bottom: 14px; opacity: 0.7; }
+
+    .pose-display { text-align: center; padding: 14px 10px; border-radius: 10px; transition: all 0.4s; }
+    .pose-display .pose-text { font-size: 14px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; }
+    .pose-display .pose-desc { font-size: 12px; font-weight: 300; font-style: italic; margin-top: 3px; opacity: 0.7; }
+    .pose-display.sitting { background: rgba(90,158,122,0.08); border: 1px solid rgba(90,158,122,0.15); }
+    .pose-display.sitting .pose-text { color: var(--jade); }
+    .pose-display.standing { background: rgba(232,160,180,0.08); border: 1px solid rgba(232,160,180,0.2); animation: glow-pink 1.5s ease infinite; }
+    .pose-display.standing .pose-text { color: var(--lotus-pink); }
+    @keyframes glow-pink { 0%, 100% { box-shadow: none; } 50% { box-shadow: 0 0 20px rgba(232,160,180,0.1); } }
+    .pose-display.unknown { background: rgba(201,168,76,0.04); border: 1px solid rgba(201,168,76,0.08); }
+    .pose-display.unknown .pose-text { color: var(--cream-dim); }
+
+    .level-info { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+    .level-name { font-size: 15px; font-weight: 500; color: var(--cream); }
+    .level-num { font-size: 11px; color: var(--cream-dim); letter-spacing: 1px; }
+    .progress-bar { height: 5px; background: rgba(201,168,76,0.1); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 3px; transition: width 0.6s ease; width: 0%; }
+    .progress-label { font-size: 11px; color: var(--cream-dim); text-align: right; }
+
+    .lotus-counter { display: flex; align-items: center; gap: 12px; justify-content: center; padding: 10px; }
+    .lotus-count-num { font-size: 32px; font-weight: 700; color: var(--gold); text-shadow: 0 0 20px var(--gold-glow); line-height: 1; }
+    .lotus-count-label { font-size: 11px; color: var(--cream-dim); font-weight: 300; letter-spacing: 1px; }
+    .lotus-petals-earned { display: flex; gap: 3px; flex-wrap: wrap; justify-content: center; margin-top: 6px; min-height: 20px; }
+    .lotus-petals-earned span { font-size: 16px; animation: petal-pop 0.4s ease-out; }
+    @keyframes petal-pop { 0% { transform: scale(0) rotate(-30deg); opacity: 0; } 60% { transform: scale(1.3) rotate(5deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+
+    .metric { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    .metric:last-child { margin-bottom: 0; }
+    .metric-label { font-size: 12px; color: var(--cream-dim); font-weight: 300; }
+    .metric-value { font-size: 15px; font-weight: 700; color: var(--cream); }
+
+    .log-list { max-height: 130px; overflow-y: auto; display: flex; flex-direction: column; gap: 3px; }
+    .log-list::-webkit-scrollbar { width: 3px; }
+    .log-list::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.2); border-radius: 3px; }
+    .log-entry { font-size: 11px; display: flex; gap: 8px; color: var(--cream-dim); padding: 4px 0; border-bottom: 1px solid rgba(201,168,76,0.05); font-weight: 300; }
+    .log-entry .time { white-space: nowrap; opacity: 0.5; }
+    .log-entry .msg { color: var(--cream); }
+    .log-entry.highlight .msg { color: var(--lotus-pink); }
+    .log-entry.success .msg { color: var(--gold-light); }
+
+    .sensitivity-row { display: flex; align-items: center; gap: 8px; }
+    .sensitivity-row input[type=range] { flex: 1; -webkit-appearance: none; height: 3px; border-radius: 3px; background: rgba(201,168,76,0.15); outline: none; }
+    .sensitivity-row input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); cursor: pointer; }
+    .sensitivity-val { font-size: 12px; color: var(--gold); min-width: 24px; text-align: right; font-weight: 700; }
+
+    footer { position: relative; z-index: 1; text-align: center; padding: 20px; font-size: 11px; color: var(--cream-dim); opacity: 0.3; border-top: 1px solid rgba(201,168,76,0.08); font-weight: 300; }
+
+    .loading-spinner { width: 14px; height: 14px; border: 2px solid rgba(201,168,76,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; vertical-align: middle; margin-right: 6px; }
+
+    .toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px); font-size: 18px; font-weight: 300; font-style: italic; color: var(--gold-light); text-shadow: 0 2px 20px rgba(201,168,76,0.4); opacity: 0; transition: all 0.5s ease; z-index: 100; pointer-events: none; letter-spacing: 1px; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes float-gentle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse-dot { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.4; } }
+  </style>
+</head>
+
+
+<body>
+  <div class="thai-border-top"></div>
+
+  <!-- ============================================================
+       MODE SELECTION
+       ============================================================ -->
+  <div class="mode-screen" id="modeScreen">
+    <div class="mode-header">
+      <span class="lotus-big">🪷</span>
+      <h1>รำไทย</h1>
+      <p>Thai Dance Rehabilitation</p>
+    </div>
+    <div class="mode-cards">
+      <div class="mode-card" onclick="selectMode('free')">
+        <span class="mode-icon">🌿</span>
+        <div class="mode-name">Free Practice</div>
+        <div class="mode-desc">Move at your own pace. No levels, no pressure — just gentle music and lotus petals for every rise.</div>
+        <span class="mode-tag">Relaxed</span>
+      </div>
+      <div class="mode-card" onclick="selectMode('guided')">
+        <span class="mode-icon">🪷</span>
+        <div class="mode-name">Guided Dance</div>
+        <div class="mode-desc">Follow a rhythmic beat through 5 dance levels. The music guides when to rise and rest.</div>
+        <span class="mode-tag">Recommended</span>
+      </div>
+      <div class="mode-card" onclick="selectMode('challenge')">
+        <span class="mode-icon">🔥</span>
+        <div class="mode-name">Festival Challenge</div>
+        <div class="mode-desc">Timed rounds with increasing tempo. How many graceful rises can you achieve?</div>
+        <span class="mode-tag">Advanced</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       CALIBRATION SCREEN
+       ============================================================ -->
+  <!-- Calibration screen is now inside the video container below -->
+
+
+  <!-- ============================================================
+       MAIN APP
+       ============================================================ -->
+  <header>
+    <div class="logo">
+      <span class="logo-thai">รำไทย</span>
+      <span class="logo-en">Thai Dance Rehab</span>
+    </div>
+    <div class="header-right">
+      <div class="music-controls">
+        <button class="music-btn" id="musicBtn" onclick="toggleMusic()" title="Toggle music">♫</button>
+        <input type="range" class="vol-slider" id="volSlider" min="0" max="100" value="50" oninput="setMusicVolume(this.value)">
+      </div>
+      <div class="mode-badge" id="modeBadge" onclick="backToModes()">Free Practice</div>
+      <div class="status-pill" id="statusPill">
+        <div class="dot"></div>
+        <span id="statusText">Awaiting</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div>
+      <div class="video-container" id="videoContainer">
+        <div class="corner-ornament tl"></div>
+        <div class="corner-ornament tr"></div>
+        <div class="corner-ornament bl"></div>
+        <div class="corner-ornament br"></div>
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="overlay"></canvas>
+        <div class="petal-container" id="petalContainer"></div>
+        <div class="dance-prompt" id="dancePrompt"></div>
+        <div class="rhythm-ring" id="rhythmRing">🪷</div>
+        <!-- Calibration overlay (inside video so you can see yourself) -->
+        <div class="calibration-screen hidden" id="calibScreen">
+          <div class="calib-content" id="calibContent"></div>
+        </div>
+        <div class="start-screen" id="startScreen">
+          <div class="lotus-icon">🪷</div>
+          <div class="start-title">Rise Gracefully</div>
+          <div class="start-subtitle" id="startSubtitle">A gentle Thai dance journey</div>
+          <button class="start-btn" id="startBtn" onclick="startApp()">Begin the Dance</button>
+          <button class="start-btn" style="border-color: var(--cream-dim); color: var(--cream-dim); font-size: 12px; padding: 8px 24px; margin-top: 4px;" onclick="startApp(true)">Skip Calibration</button>
+        </div>
+        <div class="level-complete" id="levelComplete">
+          <div class="congrats">🪷 Beautiful 🪷</div>
+          <div class="level-done-name" id="levelDoneName"></div>
+          <button class="next-btn" onclick="nextLevel()">Continue the Performance</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="card">
+        <h3>Dance Pose</h3>
+        <div class="pose-display unknown" id="poseDisplay">
+          <div class="pose-text" id="poseText">Awaiting</div>
+          <div class="pose-desc" id="poseDesc">Begin when you are ready</div>
+        </div>
+      </div>
+      <div class="card" id="levelCard">
+        <h3>Performance</h3>
+        <div class="level-info">
+          <span class="level-name" id="levelName">Lotus Awakening</span>
+          <span class="level-num" id="levelNum">Level 1</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-label" id="progressLabel">0 / 2 movements</div>
+      </div>
+      <div class="card">
+        <h3>Lotus Petals Earned</h3>
+        <div class="lotus-counter">
+          <div>
+            <div class="lotus-count-num" id="lotusCount">0</div>
+            <div class="lotus-count-label">Total Rises</div>
+          </div>
+        </div>
+        <div class="lotus-petals-earned" id="lotusPetals"></div>
+      </div>
+      <div class="card" id="timerCard" style="display: none;">
+        <h3>Time Remaining</h3>
+        <div style="text-align: center;">
+          <span class="lotus-count-num" id="timerDisplay">60</span>
+          <div class="lotus-count-label">seconds</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Body Metrics</h3>
+        <div class="metric"><span class="metric-label">Hip Height</span><span class="metric-value" id="hipHeight">—</span></div>
+        <div class="metric"><span class="metric-label">Knee Angle</span><span class="metric-value" id="kneeAngle">—</span></div>
+        <div class="metric"><span class="metric-label">Confidence</span><span class="metric-value" id="confidence">—</span></div>
+      </div>
+      <div class="card">
+        <h3>Sensitivity</h3>
+        <div class="sensitivity-row">
+          <span class="metric-label">Gentle</span>
+          <input type="range" min="5" max="30" value="15" id="sensitivitySlider" oninput="updateSensitivity()">
+          <span class="metric-label">Precise</span>
+          <span class="sensitivity-val" id="sensitivityVal">15</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Performance Log</h3>
+        <div class="log-list" id="logList">
+          <div class="log-entry"><span class="time">--:--</span><span class="msg">Waiting to begin…</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>Runs entirely in your browser · No data leaves your device · TensorFlow.js + MoveNet</footer>
+  <div class="toast" id="toast"></div>
+
+
+  <script>
+    /* ================================================================
+       CONFIGURATION
+       ================================================================
+       These start as defaults but get OVERWRITTEN by calibration.
+       After calibration, the thresholds are personalized.
+    */
+    const CONFIG = {
+      // These will be overwritten by calibration:
+      STANDING_KNEE_ANGLE: 135,
+      SITTING_KNEE_ANGLE: 115,
+      STANDING_TORSO_LENGTH: 0.12,
+
+      // These stay fixed:
+      MIN_CONFIDENCE: 0.25,
+      STABLE_FRAMES_NEEDED: 10,
+      HISTORY_SIZE: 15,
+      HIP_RISE_FACTOR: 0.5,
+      HIP_DROP_FACTOR: 0.3,
+      DRAW_MIN_SCORE: 0.2,
+      TEMPO_FREE: 700,
+      TEMPO_GUIDED: 580,
+      TEMPO_CHALLENGE: 380,
+      CHALLENGE_DURATION: 60,
+      CAMERA_WIDTH: 640,
+      CAMERA_HEIGHT: 480,
+      CAMERA_FACING: 'user',
+
+      // Calibration settings:
+      CALIBRATION_BUFFER: 0.3,            // 30% buffer between sit/stand midpoint
+      CALIB_STABLE_SECONDS: 2,            // how long user must hold steady to lock in
+      CALIB_VARIANCE_THRESHOLD: 3,        // max degrees of knee angle wobble to count as "steady"
+      CALIB_SAMPLES_PER_SEC: 10,          // measurement frequency
+    };
+
+
+    /* ================================================================
+       CALIBRATION STATE
+       ================================================================ */
+    let calibrationData = {
+      sitting: { kneeAngles: [], hipYs: [], torsoLengths: [] },
+      standing: { kneeAngles: [], hipYs: [], torsoLengths: [] },
+    };
+    let isCalibrating = false;
+    let calibPhase = 'idle'; // 'idle', 'loading', 'sit', 'stand', 'done'
+    let calibCollectInterval = null;
+
+
+    /* ================================================================
+       GAME LEVELS
+       ================================================================ */
+    const LEVELS = [
+      { name: 'Lotus Awakening',      target: 2  },
+      { name: 'Temple Greeting',      target: 3  },
+      { name: 'Golden Dance',         target: 5  },
+      { name: 'Festival Performance', target: 7  },
+      { name: 'Royal Dance Finale',   target: 10 },
+    ];
+
+
+    /* ================================================================
+       TEXT CONTENT
+       ================================================================ */
+    const SITTING_PROMPTS = [
+      'Prepare for a graceful bow…',
+      'Rest on the stage…',
+      'Gather your energy…',
+      'Feel the rhythm…',
+      'The audience awaits…',
+    ];
+
+    const STANDING_PROMPTS = [
+      'Rise like a dancer greeting the audience',
+      'Beautiful dance step!',
+      'Graceful movement!',
+      'The temple bells chime for you',
+      'Elegant as a Khon performer',
+    ];
+
+    const ENCOURAGEMENTS = [
+      '🪷 Graceful!',
+      '✨ Beautiful movement!',
+      '🔔 Temple bells ring!',
+      '🌸 Lovely dance step!',
+      '💫 Elegant rise!',
+    ];
+
+    const MODE_INFO = {
+      free:      { label: 'Free Practice',     sub: 'Move freely — no time limits, no levels' },
+      guided:    { label: 'Guided Dance',      sub: 'Follow the rhythm through 5 dance levels' },
+      challenge: { label: 'Festival Challenge', sub: '60 seconds — rise as gracefully as you can!' },
+    };
+
+
+    /* ================================================================
+       THAI MUSIC
+       ================================================================ */
+    const SCALE = {
+      low:  [261.6, 293.7, 329.6, 392.0, 440.0],
+      mid:  [523.3, 587.3, 659.3, 784.0, 880.0],
+      high: [1046.5, 1174.7, 1318.5, 1568.0, 1760.0],
+    };
+
+    const MELODY_PATTERNS = [
+      [0, 2, 4, 2,  3, 1, 0, -1],
+      [4, 3, 2, 0, -1, 1, 3,  4],
+      [0, 1, 2, 4,  3, 2, 1,  0],
+      [2, 4, 3, 1,  0,-1, 2,  4],
+      [3, 2, 0, 1,  2, 4, 3, -1],
+    ];
+
+
+    /* ================================================================
+       INTERNAL STATE
+       ================================================================ */
+    const KP = { L_SHOULDER: 5, R_SHOULDER: 6, L_HIP: 11, R_HIP: 12, L_KNEE: 13, R_KNEE: 14, L_ANKLE: 15, R_ANKLE: 16 };
+
+    let detector = null;
+    let video, canvas, ctx;
+    let isRunning = false;
+    let currentPose = 'unknown';
+    let previousPose = 'unknown';
+    let standUpCount = 0;
+    let hipHeightHistory = [];
+    let poseStableFrames = 0;
+    let sensitivity = 15;
+    let currentLevelIndex = 0;
+    let levelStands = 0;
+    let gameMode = 'free';
+    let challengeTimer = null;
+    let challengeTimeLeft = CONFIG.CHALLENGE_DURATION;
+
+    // Music
+    let musicCtx = null, musicMasterGain = null;
+    let musicPlaying = false, musicMuted = false, musicLoopId = null;
+    let musicBeat = 0, musicPatternIndex = 0, musicNoteIndex = 0;
+
+
+    /* ================================================================
+       UTILITIES
+       ================================================================ */
+    function randomFrom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+    function angleBetweenPoints(a, b, c) {
+      const ab = { x: a.x - b.x, y: a.y - b.y };
+      const cb = { x: c.x - b.x, y: c.y - b.y };
+      const dot = ab.x * cb.x + ab.y * cb.y;
+      const m1 = Math.sqrt(ab.x*ab.x + ab.y*ab.y);
+      const m2 = Math.sqrt(cb.x*cb.x + cb.y*cb.y);
+      if (!m1 || !m2) return 0;
+      return Math.acos(Math.max(-1, Math.min(1, dot / (m1*m2)))) * 180 / Math.PI;
+    }
+
+    function average(arr) {
+      if (arr.length === 0) return 0;
+      return arr.reduce((a, b) => a + b, 0) / arr.length;
+    }
+
+
+    /* ================================================================
+       CALIBRATION SYSTEM
+       ================================================================
+       Flow:
+       1. Mode selected → startApp() called
+       2. Camera + model loads
+       3. Calibration screen appears
+       4. Step 1: "Please sit naturally" — records for N seconds
+       5. Step 2: "Please stand up" — records for N seconds
+       6. Calculates thresholds as midpoints between sit/stand values
+       7. Shows results → user clicks "Begin"
+       8. Game starts with personalized thresholds
+    */
+
+    // Read current body measurements from one frame
+    function readBodyMeasurements() {
+      if (!detector || !video) return null;
+
+      // We'll use a synchronous approach: just read the latest pose
+      // This is called from an interval during calibration
+      return new Promise(async (resolve) => {
+        try {
+          const poses = await detector.estimatePoses(video);
+          if (poses.length === 0) { resolve(null); return; }
+
+          const kp = poses[0].keypoints;
+          const minConf = CONFIG.MIN_CONFIDENCE;
+
+          const lH = kp[KP.L_HIP], rH = kp[KP.R_HIP];
+          const lK = kp[KP.L_KNEE], rK = kp[KP.R_KNEE];
+          const lA = kp[KP.L_ANKLE], rA = kp[KP.R_ANKLE];
+          const lS = kp[KP.L_SHOULDER], rS = kp[KP.R_SHOULDER];
+
+          const hipConf  = Math.max(lH.score, rH.score);
+          const kneeConf = Math.max(lK.score, rK.score);
+
+          if (hipConf < minConf || kneeConf < minConf) { resolve(null); return; }
+
+          const hipY = (lH.y + rH.y) / 2 / video.videoHeight;
+          const shoulderY = (lS.y + rS.y) / 2 / video.videoHeight;
+          const torsoLength = hipY - shoulderY;
+
+          let kneeAngle = 180;
+          if (lH.score > minConf && lK.score > minConf && lA.score > minConf) {
+            kneeAngle = angleBetweenPoints(lH, lK, lA);
+          } else if (rH.score > minConf && rK.score > minConf && rA.score > minConf) {
+            kneeAngle = angleBetweenPoints(rH, rK, rA);
+          }
+
+          // Also draw skeleton during calibration
+          drawSkeleton(kp);
+
+          resolve({ kneeAngle, hipY, torsoLength });
+        } catch (e) {
+          resolve(null);
+        }
+      });
+    }
+
+    // Start collecting with STABILITY DETECTION (no timer!)
+    // Watches the body and waits until readings are steady for STABLE_DURATION ms
+    // Also validates that standing is different from sitting
+    function waitForStablePose(phase) {
+      const target = phase === 'sit' ? calibrationData.sitting : calibrationData.standing;
+      target.kneeAngles = [];
+      target.hipYs = [];
+      target.torsoLengths = [];
+
+      // Rolling window for stability check
+      const recentReadings = [];
+      const WINDOW_SIZE = 15;           // ~1.5 seconds of readings
+      const STABLE_THRESHOLD_KNEE = 5;  // degrees — readings must vary less than this
+      const STABLE_THRESHOLD_HIP = 0.02; // normalized — hip must not move more than this
+      const STABLE_DURATION = 2000;      // ms — must be stable for this long
+      let stableSince = null;
+
+      // For standing: minimum difference from sitting
+      const MIN_KNEE_DIFF = 10;   // degrees — stand must be at least this much straighter
+      const MIN_HIP_DIFF = 0.03;  // normalized — hips must rise at least this much
+
+      return new Promise((resolve) => {
+        calibCollectInterval = setInterval(async () => {
+          const m = await readBodyMeasurements();
+          if (!m) {
+            // No body detected — reset stability
+            stableSince = null;
+            const statusEl = document.getElementById('calibStatus');
+            if (statusEl) statusEl.textContent = 'Move your full body into view…';
+            const ringEl = document.getElementById('calibStabilityRing');
+            if (ringEl) ringEl.style.borderColor = 'rgba(201,168,76,0.2)';
+            return;
+          }
+
+          // Add to rolling window
+          recentReadings.push(m);
+          if (recentReadings.length > WINDOW_SIZE) recentReadings.shift();
+
+          // Update live display
+          const liveEl = document.getElementById('calibLive');
+          if (liveEl) liveEl.textContent = 'Knee: ' + Math.round(m.kneeAngle) + '°  |  Hip: ' + m.hipY.toFixed(3);
+
+          // Check stability: variance of recent readings
+          if (recentReadings.length >= WINDOW_SIZE) {
+            const knees = recentReadings.map(r => r.kneeAngle);
+            const hips = recentReadings.map(r => r.hipY);
+            const kneeRange = Math.max(...knees) - Math.min(...knees);
+            const hipRange = Math.max(...hips) - Math.min(...hips);
+
+            const isStable = kneeRange < STABLE_THRESHOLD_KNEE && hipRange < STABLE_THRESHOLD_HIP;
+
+            // For standing phase: also check it's different from sitting
+            let isDifferent = true;
+            if (phase === 'stand' && calibrationData.sitting.kneeAngles.length > 0) {
+              const sitKneeAvg = average(calibrationData.sitting.kneeAngles);
+              const sitHipAvg = average(calibrationData.sitting.hipYs);
+              const currentKnee = average(knees);
+              const currentHip = average(hips);
+              const kneeDiff = currentKnee - sitKneeAvg;
+              const hipDiff = sitHipAvg - currentHip; // hip Y decreases when standing (moves up in frame)
+
+              isDifferent = kneeDiff > MIN_KNEE_DIFF || hipDiff > MIN_HIP_DIFF;
+
+              if (!isDifferent) {
+                stableSince = null;
+                const statusEl = document.getElementById('calibStatus');
+                if (statusEl) statusEl.textContent = 'Please stand up more — too similar to sitting';
+                const ringEl = document.getElementById('calibStabilityRing');
+                if (ringEl) { ringEl.style.borderColor = '#e8a0b4'; }
+                return;
+              }
+            }
+
+            if (isStable && isDifferent) {
+              if (!stableSince) stableSince = Date.now();
+
+              const elapsed = Date.now() - stableSince;
+              const progress = Math.min(100, (elapsed / STABLE_DURATION) * 100);
+
+              const statusEl = document.getElementById('calibStatus');
+              if (statusEl) statusEl.textContent = 'Hold steady… ' + Math.round(progress) + '%';
+
+              // Visual ring fill
+              const ringEl = document.getElementById('calibStabilityRing');
+              if (ringEl) {
+                ringEl.style.borderColor = 'var(--jade)';
+                ringEl.style.boxShadow = '0 0 ' + (progress * 0.2) + 'px var(--jade)';
+              }
+
+              if (elapsed >= STABLE_DURATION) {
+                // SUCCESS — capture the stable readings
+                clearInterval(calibCollectInterval);
+                const stableReadings = recentReadings.slice(-WINDOW_SIZE);
+                target.kneeAngles = stableReadings.map(r => r.kneeAngle);
+                target.hipYs = stableReadings.map(r => r.hipY);
+                target.torsoLengths = stableReadings.map(r => r.torsoLength);
+
+                const statusEl = document.getElementById('calibStatus');
+                if (statusEl) statusEl.textContent = '✓ Captured!';
+                const ringEl = document.getElementById('calibStabilityRing');
+                if (ringEl) { ringEl.style.borderColor = 'var(--jade)'; ringEl.style.boxShadow = '0 0 20px var(--jade)'; }
+
+                setTimeout(resolve, 600); // brief pause to show success
+              }
+            } else {
+              stableSince = null;
+              const statusEl = document.getElementById('calibStatus');
+              if (statusEl) statusEl.textContent = 'Hold still in position…';
+              const ringEl = document.getElementById('calibStabilityRing');
+              if (ringEl) { ringEl.style.borderColor = 'rgba(201,168,76,0.3)'; ringEl.style.boxShadow = 'none'; }
+            }
+          } else {
+            const statusEl = document.getElementById('calibStatus');
+            if (statusEl) statusEl.textContent = 'Detecting body… stay in view';
+          }
+        }, 100);
+      });
+    }
+
+    // Calculate thresholds from calibration data
+    function calculateThresholds() {
+      const sit = calibrationData.sitting;
+      const stand = calibrationData.standing;
+
+      const sitKnee   = average(sit.kneeAngles);
+      const standKnee = average(stand.kneeAngles);
+      const sitHipY   = average(sit.hipYs);
+      const standHipY = average(stand.hipYs);
+      const sitTorso  = average(sit.torsoLengths);
+      const standTorso= average(stand.torsoLengths);
+
+      const buf = CONFIG.CALIBRATION_BUFFER;
+      const kneeRange = standKnee - sitKnee;
+      CONFIG.STANDING_KNEE_ANGLE = sitKnee + kneeRange * (1 - buf);
+      CONFIG.SITTING_KNEE_ANGLE  = sitKnee + kneeRange * buf;
+      CONFIG.STANDING_TORSO_LENGTH = sitTorso + (standTorso - sitTorso) * 0.5;
+
+      return {
+        sitKnee: Math.round(sitKnee),
+        standKnee: Math.round(standKnee),
+        thresholdStandKnee: Math.round(CONFIG.STANDING_KNEE_ANGLE),
+        thresholdSitKnee: Math.round(CONFIG.SITTING_KNEE_ANGLE),
+        thresholdTorso: CONFIG.STANDING_TORSO_LENGTH.toFixed(3),
+        sitSamples: sit.kneeAngles.length,
+        standSamples: stand.kneeAngles.length,
+      };
+    }
+
+    // Run the full calibration flow
+    async function runCalibration() {
+      const screen = document.getElementById('calibScreen');
+      const content = document.getElementById('calibContent');
+      screen.classList.remove('hidden');
+
+      // --- STEP 1: SIT ---
+      calibPhase = 'sit';
+      content.innerHTML = `
+        <div class="calib-icon">🪑</div>
+        <div class="calib-title">Step 1: Sit Naturally</div>
+        <div class="calib-instruction">
+          Sit comfortably. The ring turns green when you're steady.
+        </div>
+        <div class="calib-countdown" id="calibStabilityRing" style="border-color: rgba(201,168,76,0.2);">
+          <div class="calib-countdown-num" style="font-size:28px;">🪑</div>
+        </div>
+        <div class="calib-progress-text" id="calibStatus">Detecting body… stay in view</div>
+        <div class="calib-progress-text" id="calibLive" style="opacity:0.5; font-size:11px;">—</div>
+      `;
+
+      await waitForStablePose('sit');
+
+      // --- STEP 2: STAND ---
+      calibPhase = 'stand';
+      content.innerHTML = `
+        <div class="calib-icon">🧍</div>
+        <div class="calib-title">Step 2: Stand Up</div>
+        <div class="calib-instruction">
+          Rise at your own pace — take as long as you need.<br>
+          Hold your comfortable standing position.
+        </div>
+        <div class="calib-countdown" id="calibStabilityRing" style="border-color: rgba(201,168,76,0.2);">
+          <div class="calib-countdown-num" style="font-size:28px;">🧍</div>
+        </div>
+        <div class="calib-progress-text" id="calibStatus">Whenever you're ready…</div>
+        <div class="calib-progress-text" id="calibLive" style="opacity:0.5; font-size:11px;">—</div>
+      `;
+
+      await waitForStablePose('stand');
+
+      // --- STEP 3: RESULTS ---
+      calibPhase = 'done';
+      const results = calculateThresholds();
+
+      content.innerHTML = `
+        <div class="calib-icon">✅</div>
+        <div class="calib-title">Calibration Complete!</div>
+        <div class="calib-instruction">
+          Sit: ${results.sitKnee}° → Stand: ${results.standKnee}°<br>
+          Personalized to your body and chair.
+        </div>
+        <div style="font-size:12px; color:var(--cream-dim); margin-bottom:12px;">
+          Thresholds: standing >${results.thresholdStandKnee}° knee
+          · sitting <${results.thresholdSitKnee}° knee
+        </div>
+        <button class="calib-btn" onclick="finishCalibration()">Begin the Dance 🪷</button>
+      `;
+
+      addLog('Calibration complete — personalized', 'success');
+      addLog('Sit: ' + results.sitKnee + '° → Stand: ' + results.standKnee + '°', 'success');
+    }
+
+    function finishCalibration() {
+      document.getElementById('calibScreen').classList.add('hidden');
+      isCalibrating = false;
+      isRunning = true;
+
+      // Start music
+      initMusic();
+      startMusic();
+
+      // Start challenge timer if needed
+      if (gameMode === 'challenge') startChallengeTimer();
+
+      // Begin detection
+      setStatus('Detecting', 'active');
+      updateLevelUI();
+      detectLoop();
+    }
+
+
+    /* ================================================================
+       MUSIC ENGINE
+       ================================================================ */
+    function initMusic() {
+      if (musicCtx) return;
+      musicCtx = new (window.AudioContext || window.webkitAudioContext)();
+      musicMasterGain = musicCtx.createGain();
+      musicMasterGain.gain.value = 0.3;
+      musicMasterGain.connect(musicCtx.destination);
+    }
+
+    function playNote(freq, dur, delay, type, vol, det) {
+      if (!musicCtx || musicMuted) return;
+      const osc = musicCtx.createOscillator();
+      const g = musicCtx.createGain();
+      osc.connect(g); g.connect(musicMasterGain);
+      osc.type = type || 'sine';
+      osc.frequency.value = freq;
+      if (det) osc.detune.value = det;
+      const t = musicCtx.currentTime + delay;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(vol || 0.12, t + 0.04);
+      g.gain.setValueAtTime(vol || 0.12, t + dur * 0.55);
+      g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.start(t); osc.stop(t + dur);
+    }
+
+    function playChing(delay) {
+      if (!musicCtx || musicMuted) return;
+      const buf = musicCtx.createBuffer(1, musicCtx.sampleRate * 0.12, musicCtx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = (Math.random()*2-1) * Math.pow(1-i/d.length, 4);
+      const src = musicCtx.createBufferSource(); src.buffer = buf;
+      const filt = musicCtx.createBiquadFilter(); filt.type = 'highpass'; filt.frequency.value = 7000;
+      const g = musicCtx.createGain(); g.gain.value = 0.05;
+      src.connect(filt); filt.connect(g); g.connect(musicMasterGain);
+      src.start(musicCtx.currentTime + delay);
+    }
+
+    function playTaphon(delay) {
+      if (!musicCtx || musicMuted) return;
+      const osc = musicCtx.createOscillator();
+      const g = musicCtx.createGain();
+      osc.connect(g); g.connect(musicMasterGain);
+      osc.type = 'sine';
+      const t = musicCtx.currentTime + delay;
+      osc.frequency.setValueAtTime(110, t);
+      osc.frequency.exponentialRampToValueAtTime(50, t + 0.18);
+      g.gain.setValueAtTime(0.1, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+      osc.start(t); osc.stop(t + 0.25);
+    }
+
+    function getCurrentTempo() {
+      return gameMode === 'challenge' ? CONFIG.TEMPO_CHALLENGE : gameMode === 'guided' ? CONFIG.TEMPO_GUIDED : CONFIG.TEMPO_FREE;
+    }
+
+    function musicTick() {
+      if (!musicPlaying || musicMuted) return;
+      const pat = MELODY_PATTERNS[musicPatternIndex];
+      const deg = pat[musicNoteIndex];
+      const bd = getCurrentTempo() / 1000;
+      if (deg >= 0) { playNote(SCALE.mid[deg], bd*1.2, 0, 'triangle', 0.09, 0); playNote(SCALE.mid[deg], bd*0.7, 0, 'sine', 0.04, 7); }
+      if (musicBeat % 4 === 0) playNote(SCALE.low[0], bd*3.5, 0, 'sine', 0.05, 0);
+      if (musicBeat % 2 === 0) playChing(0);
+      if (musicBeat % 4 === 0 || musicBeat % 4 === 2) playTaphon(0);
+      if (musicBeat % 3 === 0 && deg >= 0) playNote(SCALE.high[(deg+2)%5], bd*0.45, bd*0.4, 'sine', 0.025, 0);
+      if (musicBeat % 8 === 0) playNote(SCALE.low[deg>=0?deg:0], bd*2, 0, 'triangle', 0.07, -5);
+      if (gameMode === 'guided') { const r = document.getElementById('rhythmRing'); r.classList.add('beat'); setTimeout(() => r.classList.remove('beat'), 280); }
+      musicNoteIndex++;
+      if (musicNoteIndex >= pat.length) { musicNoteIndex = 0; musicPatternIndex = (musicPatternIndex+1) % MELODY_PATTERNS.length; }
+      musicBeat++;
+    }
+
+    function startMusic() { stopMusic(); if (!musicCtx) initMusic(); musicPlaying = true; musicBeat = 0; musicPatternIndex = 0; musicNoteIndex = 0; musicTick(); musicLoopId = setInterval(musicTick, getCurrentTempo()); }
+    function stopMusic() { musicPlaying = false; if (musicLoopId) { clearInterval(musicLoopId); musicLoopId = null; } }
+
+    function toggleMusic() {
+      musicMuted = !musicMuted;
+      const btn = document.getElementById('musicBtn');
+      btn.classList.toggle('muted', musicMuted);
+      btn.textContent = musicMuted ? '♪' : '♫';
+      if (!musicMuted && isRunning) startMusic();
+      if (musicMuted) stopMusic();
+    }
+
+    function setMusicVolume(v) { if (musicMasterGain) musicMasterGain.gain.value = v / 100 * 0.6; }
+
+
+    /* ================================================================
+       SOUND EFFECTS
+       ================================================================ */
+    function playRiseSound() {
+      try {
+        const ac = musicCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const dest = musicMasterGain || ac.destination;
+        [523.25,587.33,659.25,783.99,880].forEach((f,i) => {
+          const o = ac.createOscillator(), g = ac.createGain();
+          o.connect(g); g.connect(dest); o.type = 'sine'; o.frequency.value = f;
+          const t = ac.currentTime + i*0.08;
+          g.gain.setValueAtTime(0.18, t); g.gain.exponentialRampToValueAtTime(0.01, t+0.35);
+          o.start(t); o.stop(t+0.35);
+        });
+      } catch(e) {}
+    }
+
+    function playLevelChime() {
+      try {
+        const ac = musicCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const dest = musicMasterGain || ac.destination;
+        [523.25,659.25,783.99,1046.5].forEach((f,i) => {
+          const o = ac.createOscillator(), g = ac.createGain();
+          o.connect(g); g.connect(dest); o.type = 'triangle'; o.frequency.value = f;
+          const t = ac.currentTime + i*0.18;
+          g.gain.setValueAtTime(0.22, t); g.gain.exponentialRampToValueAtTime(0.01, t+0.7);
+          o.start(t); o.stop(t+0.7);
+        });
+      } catch(e) {}
+    }
+
+
+    /* ================================================================
+       MODE SELECTION
+       ================================================================ */
+    function selectMode(mode) {
+      gameMode = mode;
+      document.getElementById('modeScreen').classList.add('hidden');
+      document.getElementById('modeBadge').textContent = MODE_INFO[mode].label;
+      document.getElementById('startSubtitle').textContent = MODE_INFO[mode].sub;
+      document.getElementById('levelCard').style.display = (mode === 'free') ? 'none' : 'block';
+      document.getElementById('timerCard').style.display = (mode === 'challenge') ? 'block' : 'none';
+      document.getElementById('rhythmRing').classList.toggle('show', mode === 'guided');
+    }
+
+    function backToModes() {
+      isRunning = false;
+      stopMusic();
+      if (challengeTimer) { clearInterval(challengeTimer); challengeTimer = null; }
+      standUpCount = 0; levelStands = 0; currentLevelIndex = 0;
+      currentPose = 'unknown'; previousPose = 'unknown'; hipHeightHistory = [];
+      document.getElementById('lotusCount').textContent = '0';
+      document.getElementById('lotusPetals').innerHTML = '';
+      document.getElementById('modeScreen').classList.remove('hidden');
+      document.getElementById('startScreen').style.display = '';
+      document.getElementById('levelComplete').classList.remove('show');
+      document.getElementById('calibScreen').classList.add('hidden');
+      setStatus('Awaiting', '');
+    }
+
+
+    /* ================================================================
+       UI FUNCTIONS
+       ================================================================ */
+    function setStatus(t, c) { document.getElementById('statusPill').className = 'status-pill ' + c; document.getElementById('statusText').textContent = t; }
+
+    function setPoseUI(pose) {
+      const el = document.getElementById('poseDisplay');
+      const txt = document.getElementById('poseText');
+      const desc = document.getElementById('poseDesc');
+      const vc = document.getElementById('videoContainer');
+      const pr = document.getElementById('dancePrompt');
+      el.className = 'pose-display ' + pose;
+      if (pose === 'sitting') {
+        txt.textContent = 'Resting Pose'; desc.textContent = randomFrom(SITTING_PROMPTS);
+        vc.className = 'video-container sitting'; pr.textContent = '🪷 ' + randomFrom(SITTING_PROMPTS); pr.classList.add('show');
+      } else if (pose === 'standing') {
+        txt.textContent = 'Rising!'; desc.textContent = randomFrom(STANDING_PROMPTS);
+        vc.className = 'video-container standing'; pr.textContent = '✨ ' + randomFrom(STANDING_PROMPTS); pr.classList.add('show');
+      } else {
+        txt.textContent = 'Awaiting'; desc.textContent = 'Move into view'; vc.className = 'video-container'; pr.classList.remove('show');
+      }
+    }
+
+    function updateLevelUI() {
+      if (gameMode === 'free') return;
+      const lv = LEVELS[currentLevelIndex];
+      document.getElementById('levelName').textContent = lv.name;
+      document.getElementById('levelNum').textContent = 'Level ' + (currentLevelIndex + 1);
+      document.getElementById('progressLabel').textContent = levelStands + ' / ' + lv.target + ' movements';
+      document.getElementById('progressFill').style.width = Math.min(100, (levelStands / lv.target) * 100) + '%';
+    }
+
+    function addLotus() {
+      const s = document.createElement('span'); s.textContent = '🪷';
+      document.getElementById('lotusPetals').appendChild(s);
+      document.getElementById('lotusCount').textContent = standUpCount;
+    }
+
+    function spawnPetals() {
+      const c = document.getElementById('petalContainer');
+      ['🌸','🪷','✿','🌸','🪷','✿'].forEach(e => {
+        const p = document.createElement('div'); p.className = 'petal'; p.textContent = e;
+        p.style.left = (10+Math.random()*80)+'%'; p.style.top = (Math.random()*30)+'%';
+        p.style.animationDelay = (Math.random()*0.8)+'s'; p.style.fontSize = (18+Math.random()*16)+'px';
+        c.appendChild(p); setTimeout(() => p.remove(), 3500);
+      });
+    }
+
+    function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
+
+    function addLog(msg, cls) {
+      cls = cls || '';
+      const list = document.getElementById('logList');
+      const time = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+      const e = document.createElement('div'); e.className = 'log-entry ' + cls;
+      e.innerHTML = '<span class="time">' + time + '</span><span class="msg">' + msg + '</span>';
+      list.prepend(e);
+      if (list.children.length > 40) list.removeChild(list.lastChild);
+    }
+
+    function updateSensitivity() {
+      sensitivity = parseInt(document.getElementById('sensitivitySlider').value);
+      document.getElementById('sensitivityVal').textContent = sensitivity;
+    }
+
+
+    /* ================================================================
+       LEVEL COMPLETE / CHALLENGE
+       ================================================================ */
+    function showLevelComplete() {
+      document.getElementById('levelDoneName').textContent = LEVELS[currentLevelIndex].name + ' — Complete';
+      document.getElementById('levelComplete').classList.add('show');
+      addLog(LEVELS[currentLevelIndex].name + ' complete!', 'success');
+      playLevelChime();
+    }
+
+    function nextLevel() {
+      document.getElementById('levelComplete').classList.remove('show');
+      if (currentLevelIndex < LEVELS.length - 1) {
+        currentLevelIndex++; levelStands = 0; updateLevelUI();
+        addLog('Starting: ' + LEVELS[currentLevelIndex].name, 'success');
+      } else {
+        addLog('All levels complete! Grand performance!', 'success');
+        showToast('🪷 Grand Performance Complete! 🪷');
+        currentLevelIndex = 0; levelStands = 0; updateLevelUI();
+      }
+    }
+
+    function startChallengeTimer() {
+      challengeTimeLeft = CONFIG.CHALLENGE_DURATION;
+      document.getElementById('timerDisplay').textContent = challengeTimeLeft;
+      challengeTimer = setInterval(() => {
+        challengeTimeLeft--;
+        document.getElementById('timerDisplay').textContent = challengeTimeLeft;
+        if (challengeTimeLeft <= 0) {
+          clearInterval(challengeTimer); challengeTimer = null;
+          showToast('🏆 Festival complete! ' + standUpCount + ' rises!');
+          addLog('Challenge ended — ' + standUpCount + ' rises', 'success');
+          playLevelChime();
+        }
+      }, 1000);
+    }
+
+
+    /* ================================================================
+       POSE ANALYSIS
+       ================================================================
+       Uses CONFIG values (which are set by calibration).
+    */
+    function analyzePose(keypoints) {
+      const minConf = CONFIG.MIN_CONFIDENCE;
+      const lH = keypoints[KP.L_HIP], rH = keypoints[KP.R_HIP];
+      const lK = keypoints[KP.L_KNEE], rK = keypoints[KP.R_KNEE];
+      const lA = keypoints[KP.L_ANKLE], rA = keypoints[KP.R_ANKLE];
+      const lS = keypoints[KP.L_SHOULDER], rS = keypoints[KP.R_SHOULDER];
+
+      const hipConf  = Math.max(lH.score, rH.score);
+      const kneeConf = Math.max(lK.score, rK.score);
+      if (hipConf < minConf || kneeConf < minConf) return { pose: 'unknown', hipY: null, kneeAngle: null, conf: 0 };
+
+      const hipY = (lH.y + rH.y) / 2 / video.videoHeight;
+      let kneeAngle = 180;
+      if (lH.score > minConf && lK.score > minConf && lA.score > minConf) kneeAngle = angleBetweenPoints(lH, lK, lA);
+      else if (rH.score > minConf && rK.score > minConf && rA.score > minConf) kneeAngle = angleBetweenPoints(rH, rK, rA);
+
+      const shoulderY = (lS.y + rS.y) / 2 / video.videoHeight;
+      const torsoLength = hipY - shoulderY;
+
+      hipHeightHistory.push(hipY);
+      if (hipHeightHistory.length > CONFIG.HISTORY_SIZE) hipHeightHistory.shift();
+
+      let detectedPose = 'unknown';
+
+      // Use calibrated thresholds
+      if (kneeAngle > CONFIG.STANDING_KNEE_ANGLE && torsoLength > CONFIG.STANDING_TORSO_LENGTH) {
+        detectedPose = 'standing';
+      }
+      else if (kneeAngle < CONFIG.SITTING_KNEE_ANGLE) {
+        detectedPose = 'sitting';
+      }
+      else if (hipHeightHistory.length >= 5) {
+        const recentAvg = hipHeightHistory.slice(-3).reduce((a,b)=>a+b,0)/3;
+        const olderAvg  = hipHeightHistory.slice(0,3).reduce((a,b)=>a+b,0)/3;
+        const change = ((olderAvg - recentAvg) / olderAvg) * 100;
+        if (change > sensitivity * CONFIG.HIP_RISE_FACTOR) detectedPose = 'standing';
+        else if (change < -sensitivity * CONFIG.HIP_DROP_FACTOR) detectedPose = 'sitting';
+      }
+
+      return { pose: detectedPose, hipY, kneeAngle, conf: (hipConf + kneeConf) / 2 };
+    }
+
+
+    /* ================================================================
+       POSE TRANSITION HANDLER
+       ================================================================ */
+    function handlePoseTransition(newPose) {
+      if (newPose === 'unknown') { poseStableFrames = 0; return; }
+      if (newPose !== currentPose) {
+        poseStableFrames++;
+        if (poseStableFrames >= CONFIG.STABLE_FRAMES_NEEDED) {
+          previousPose = currentPose; currentPose = newPose; poseStableFrames = 0;
+          if (currentPose === 'standing' && previousPose === 'sitting') {
+            if (gameMode === 'challenge' && challengeTimeLeft <= 0) return;
+            standUpCount++; levelStands++;
+            addLotus(); spawnPetals(); showToast(randomFrom(ENCOURAGEMENTS));
+            addLog('Graceful rise #' + standUpCount, 'highlight');
+            playRiseSound(); updateLevelUI();
+            if (gameMode === 'guided' && levelStands >= LEVELS[currentLevelIndex].target) setTimeout(showLevelComplete, 800);
+          } else if (currentPose === 'sitting') { addLog('Returned to resting pose'); }
+          setPoseUI(currentPose);
+        }
+      } else { poseStableFrames = 0; }
+    }
+
+
+    /* ================================================================
+       SKELETON DRAWING
+       ================================================================ */
+    function drawSkeleton(keypoints) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const conn = [[5,6],[5,7],[7,9],[6,8],[8,10],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16]];
+      const isSt = currentPose === 'standing';
+      ctx.strokeStyle = isSt ? 'rgba(232,160,180,0.5)' : 'rgba(201,168,76,0.35)';
+      ctx.lineWidth = 2; ctx.lineCap = 'round';
+      for (const [i,j] of conn) {
+        if (keypoints[i].score > CONFIG.DRAW_MIN_SCORE && keypoints[j].score > CONFIG.DRAW_MIN_SCORE) {
+          ctx.beginPath(); ctx.moveTo(keypoints[i].x, keypoints[i].y); ctx.lineTo(keypoints[j].x, keypoints[j].y); ctx.stroke();
+        }
+      }
+      const dc = isSt ? '#e8a0b4' : '#c9a84c';
+      const gc = isSt ? 'rgba(232,160,180,0.1)' : 'rgba(201,168,76,0.08)';
+      for (const p of keypoints) {
+        if (p.score > CONFIG.DRAW_MIN_SCORE) {
+          ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2); ctx.fillStyle = dc; ctx.fill();
+          ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fillStyle = gc; ctx.fill();
+        }
+      }
+    }
+
+
+    /* ================================================================
+       DETECTION LOOP
+       ================================================================ */
+    async function detectLoop() {
+      if (!isRunning) return;
+      try {
+        const poses = await detector.estimatePoses(video);
+        if (poses.length > 0) {
+          const kps = poses[0].keypoints;
+          const r = analyzePose(kps);
+          if (r.hipY !== null) document.getElementById('hipHeight').textContent = r.hipY.toFixed(3);
+          if (r.kneeAngle !== null) document.getElementById('kneeAngle').textContent = Math.round(r.kneeAngle) + '°';
+          document.getElementById('confidence').textContent = (r.conf * 100).toFixed(0) + '%';
+          handlePoseTransition(r.pose);
+          drawSkeleton(kps);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          document.getElementById('confidence').textContent = '—';
+        }
+      } catch(e) { console.error(e); }
+      requestAnimationFrame(detectLoop);
+    }
+
+
+    /* ================================================================
+       APP STARTUP
+       ================================================================
+       1. Load camera + model
+       2. Run calibration
+       3. Then start game
+    */
+    async function startApp(skipCalibration) {
+      const btn = document.getElementById('startBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading-spinner"></span> Loading…';
+      setStatus('Loading…', '');
+
+      try {
+        // 1. Camera
+        addLog('Requesting camera…');
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: CONFIG.CAMERA_FACING, width: { ideal: CONFIG.CAMERA_WIDTH }, height: { ideal: CONFIG.CAMERA_HEIGHT } }
+        });
+        video = document.getElementById('video');
+        video.srcObject = stream;
+        await video.play();
+        canvas = document.getElementById('overlay');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx = canvas.getContext('2d');
+        addLog('Camera active');
+
+        // 2. Model
+        btn.innerHTML = '<span class="loading-spinner"></span> Loading AI…';
+        addLog('Loading MoveNet…');
+        detector = await poseDetection.createDetector(
+          poseDetection.SupportedModels.MoveNet,
+          { modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING }
+        );
+        addLog('MoveNet ready', 'success');
+
+        // 3. Hide start screen
+        document.getElementById('startScreen').style.display = 'none';
+
+        if (skipCalibration) {
+          // Skip calibration — use default CONFIG thresholds
+          addLog('Skipped calibration — using defaults', 'success');
+          finishCalibration();
+        } else {
+          // 4. Run calibration
+          setStatus('Calibrating…', '');
+          isCalibrating = true;
+          await runCalibration();
+          // Game starts when user clicks "Begin the Dance" in calibration screen
+        }
+
+      } catch(err) {
+        console.error(err);
+        btn.disabled = false;
+        btn.textContent = 'Retry';
+        setStatus('Error', '');
+        addLog('Error: ' + err.message);
+        if (err.name === 'NotAllowedError') addLog('Camera denied — please allow access');
+      }
+    }
+
+  </script>
+</body>
+</html>
