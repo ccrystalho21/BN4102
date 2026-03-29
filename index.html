@@ -78,9 +78,12 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: safe center;
       background: var(--dark);
       transition: opacity 0.6s, visibility 0.6s;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 40px 0;
     }
 
     .patient-screen.hidden {
@@ -490,9 +493,12 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: safe center;
       background: var(--dark);
       transition: opacity 0.6s, visibility 0.6s;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 40px 0;
     }
 
     .mode-screen.hidden {
@@ -958,7 +964,22 @@
       padding: 24px 20px; display: grid; grid-template-columns: 1fr 280px; gap: 20px;
     }
 
-    @media (max-width: 860px) { main { grid-template-columns: 1fr; max-width: 600px; } }
+    @media (max-width: 860px) {
+      main {
+        grid-template-columns: 1fr;
+        max-width: 700px;
+      }
+      /* On single-column, show a compact horizontal stats bar above the full panel */
+      .panel { gap: 10px; }
+    }
+
+    /* iPad landscape keeps two columns */
+    @media (min-width: 861px) and (max-width: 1100px) {
+      main {
+        grid-template-columns: 1fr 250px;
+        gap: 16px;
+      }
+    }
 
 
     /* ================================================================
@@ -1517,6 +1538,342 @@
       opacity: 0.6;
     }
 
+
+    /* ================================================================
+       iPAD & TABLET OPTIMIZATIONS
+       ================================================================ */
+
+    /* Touch-friendly: larger tap targets everywhere */
+    @media (pointer: coarse) {
+      .start-btn, .calib-btn, .patient-continue-btn, .mode-action-btn,
+      .progress-back-btn, .progress-export-btn, .finish-session-btn,
+      .lb-tab, .next-btn {
+        min-height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .music-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
+      }
+
+      .vol-slider {
+        height: 6px;
+        width: 90px;
+      }
+
+      .vol-slider::-webkit-slider-thumb {
+        width: 22px;
+        height: 22px;
+      }
+
+      .sensitivity-row input[type=range] {
+        height: 6px;
+      }
+
+      .sensitivity-row input[type=range]::-webkit-slider-thumb {
+        width: 22px;
+        height: 22px;
+      }
+
+      .mode-badge, .patient-badge {
+        padding: 8px 16px;
+        font-size: 12px;
+      }
+
+      .avatar-option {
+        width: 72px;
+        height: 72px;
+        font-size: 36px;
+      }
+
+      .avatar-option .av-name {
+        font-size: 10px;
+        bottom: -20px;
+      }
+
+      .recent-patient-chip {
+        padding: 12px 22px;
+        font-size: 16px;
+      }
+
+      .patient-input {
+        font-size: 22px;
+        padding: 16px 22px;
+      }
+    }
+
+    /* iPad landscape (1024x768) and iPad Air/Pro portrait (~820px) */
+    @media (min-width: 700px) and (max-width: 1100px) {
+      main {
+        grid-template-columns: 1fr 240px;
+        max-width: 100%;
+        padding: 16px;
+        gap: 14px;
+      }
+
+      /* Mode screen — compact for iPad viewport */
+      .mode-screen, .patient-screen {
+        padding: 24px 0;
+      }
+
+      .mode-header {
+        margin-bottom: 20px;
+      }
+
+      .mode-header .lotus-big {
+        font-size: 40px;
+        margin-bottom: 8px;
+      }
+
+      .mode-header h1 {
+        font-size: 32px;
+        margin-bottom: 4px;
+      }
+
+      .mode-header p {
+        font-size: 15px;
+      }
+
+      .mode-header-actions {
+        margin-top: 10px;
+      }
+
+      .mode-cards {
+        gap: 14px;
+      }
+
+      .mode-card {
+        width: 220px;
+        padding: 22px 18px;
+      }
+
+      .mode-card .mode-icon {
+        font-size: 32px;
+        margin-bottom: 10px;
+      }
+
+      .mode-card .mode-name {
+        font-size: 19px;
+      }
+
+      .mode-card .mode-desc {
+        font-size: 13px;
+      }
+
+      /* Avatar picker compact */
+      .avatar-picker {
+        gap: 8px;
+      }
+
+      .avatar-option {
+        width: 60px;
+        height: 60px;
+        font-size: 30px;
+      }
+
+      /* Keep video + key info visible together */
+      .video-container {
+        aspect-ratio: 4/3;
+      }
+
+      .lotus-count-num {
+        font-size: 48px;
+      }
+
+      .lotus-count-label {
+        font-size: 13px;
+      }
+
+      .pose-display .pose-text {
+        font-size: 18px;
+      }
+
+      .pose-display .pose-desc {
+        font-size: 14px;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      .card h3 {
+        font-size: 11px;
+      }
+
+      header {
+        padding: 12px 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .header-right {
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .finish-session-btn {
+        font-size: 13px;
+        padding: 10px 22px;
+      }
+
+      .lb-podium-item {
+        width: 140px;
+      }
+
+      .lb-podium-avatar {
+        font-size: 50px;
+      }
+
+      .summary-card .summary-num {
+        font-size: 42px;
+      }
+    }
+
+    /* iPad portrait / smaller tablets — single column but optimized */
+    @media (max-width: 700px) {
+      main {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+        padding: 12px;
+        gap: 12px;
+      }
+
+      /* Show rise count as floating overlay on video instead of below */
+      .panel {
+        gap: 10px;
+      }
+
+      /* Only show essential cards, hide less important ones on small screens */
+      .card h3 {
+        font-size: 11px;
+        margin-bottom: 10px;
+      }
+
+      .lotus-count-num {
+        font-size: 44px;
+      }
+
+      header {
+        padding: 10px 14px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .logo-thai { font-size: 18px; }
+      .logo-en { font-size: 10px; letter-spacing: 2px; }
+
+      .header-right {
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      /* Hide volume slider on small touch screens — just use mute button */
+      .vol-slider { display: none; }
+
+      /* Mode screen */
+      .mode-header h1 { font-size: 34px; }
+      .mode-header p { font-size: 15px; }
+
+      .mode-cards { gap: 14px; }
+
+      .mode-card {
+        width: 100%;
+        max-width: 300px;
+        padding: 24px 20px;
+      }
+
+      /* Patient screen */
+      .patient-header h1 { font-size: 34px; }
+      .patient-header .lotus-big { font-size: 44px; }
+
+      .avatar-picker {
+        gap: 8px;
+      }
+
+      /* Session table scrollable */
+      .session-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Progress report */
+      .progress-top-bar {
+        padding: 12px 14px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .progress-content {
+        padding: 20px 14px;
+      }
+
+      .progress-summary {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      /* Leaderboard */
+      .lb-podium {
+        gap: 8px;
+      }
+
+      .lb-podium-item {
+        width: 100px;
+      }
+
+      .lb-podium-avatar {
+        font-size: 36px;
+      }
+
+      .lb-podium-name {
+        font-size: 12px;
+      }
+
+      .lb-mode-tabs {
+        gap: 6px;
+      }
+
+      .lb-tab {
+        font-size: 11px;
+        padding: 8px 14px;
+      }
+
+      /* Start screen on video */
+      .start-screen .start-title { font-size: 22px; }
+      .start-screen .lotus-icon { font-size: 38px; }
+
+      .start-btn {
+        padding: 14px 40px;
+        font-size: 16px;
+      }
+
+      /* Calibration */
+      .calib-title { font-size: 20px; }
+      .calib-instruction { font-size: 14px; }
+    }
+
+    /* Prevent zoom on input focus (iOS) */
+    @media (pointer: coarse) {
+      input[type="text"], input[type="range"], select, textarea {
+        font-size: 16px !important;
+      }
+    }
+
+    /* Safe area for notched iPads */
+    @supports (padding: env(safe-area-inset-bottom)) {
+      footer {
+        padding-bottom: calc(20px + env(safe-area-inset-bottom));
+      }
+      header {
+        padding-top: calc(16px + env(safe-area-inset-top));
+      }
+    }
+
   </style>
 </head>
 
@@ -1961,6 +2318,9 @@
 
       // Render avatar picker on mode screen
       renderModeAvatarPicker();
+
+      // Pull this patient's sessions from cloud in background
+      syncPullPatientSessions(name);
 
       // Transition to mode screen
       document.getElementById('patientScreen').classList.add('hidden');
@@ -3697,7 +4057,38 @@
       return null;
     }
 
-    // Silent patient list load — merges cloud patients into local list
+    // Pull and merge sessions for a specific patient into local storage
+    async function syncPullPatientSessions(patientName) {
+      if (!CLOUD_SYNC_URL) return;
+      const cloudSessions = await syncLoadPatientSessions(patientName);
+      if (cloudSessions && cloudSessions.length > 0) {
+        const local = getPatientSessions(patientName);
+        const makeKey = (s) => (s.mode||s.modeLabel||'') + '|' + (s.totalRises||0) + '|' + (s.duration||0);
+        const localKeys = new Set(local.map(makeKey));
+        let merged = [...local];
+        let added = 0;
+        for (const cs of cloudSessions) {
+          if (!localKeys.has(makeKey(cs))) {
+            merged.push(cs);
+            localKeys.add(makeKey(cs));
+            added++;
+          }
+        }
+        if (added > 0) {
+          merged.sort((a, b) => {
+            const da = a.date ? new Date(a.date) : new Date(a.dateDisplay + ' ' + a.timeDisplay);
+            const db = b.date ? new Date(b.date) : new Date(b.dateDisplay + ' ' + b.timeDisplay);
+            return db - da;
+          });
+          const all = getAllPatientData();
+          if (!all[patientName]) all[patientName] = { sessions: [], created: new Date().toISOString() };
+          all[patientName].sessions = merged;
+          saveAllPatientData(all);
+        }
+      }
+    }
+
+    // On startup: pull patient list AND all their sessions so leaderboard works
     async function syncLoadPatients() {
       if (!CLOUD_SYNC_URL) return;
       try {
@@ -3705,52 +4096,29 @@
         const data = await resp.json();
         if (data.ok && data.patients) {
           const local = getAllPatientData();
-          for (const [name, count] of Object.entries(data.patients)) {
+          const names = Object.keys(data.patients);
+          for (const name of names) {
             if (!local[name]) {
               local[name] = { sessions: [], created: new Date().toISOString() };
             }
-            local[name].cloudSessions = count;
+            local[name].cloudSessions = data.patients[name];
           }
           saveAllPatientData(local);
           renderRecentPatients();
+
+          // Pull sessions for all patients in background (for leaderboard)
+          for (const name of names) {
+            syncPullPatientSessions(name);
+          }
         }
       } catch(e) {}
     }
 
-    // Override openProgressReport to merge cloud data with robust deduplication
+    // Override openProgressReport to pull latest cloud data before showing
     const _originalOpenProgressReport = openProgressReport;
     openProgressReport = async function() {
       if (CLOUD_SYNC_URL) {
-        const cloudSessions = await syncLoadPatientSessions(currentPatientName);
-        if (cloudSessions && cloudSessions.length > 0) {
-          const local = getPatientSessions(currentPatientName);
-
-          // Fingerprint: mode + totalRises + duration — these never get reformatted by Sheets
-          const makeKey = (s) => (s.mode||s.modeLabel||'') + '|' + (s.totalRises||0) + '|' + (s.duration||0);
-          const localKeys = new Set(local.map(makeKey));
-
-          let merged = [...local];
-          let added = 0;
-          for (const cs of cloudSessions) {
-            if (!localKeys.has(makeKey(cs))) {
-              merged.push(cs);
-              localKeys.add(makeKey(cs)); // prevent cloud duplicates too
-              added++;
-            }
-          }
-
-          if (added > 0) {
-            merged.sort((a, b) => {
-              const da = a.date ? new Date(a.date) : new Date(a.dateDisplay + ' ' + a.timeDisplay);
-              const db = b.date ? new Date(b.date) : new Date(b.dateDisplay + ' ' + b.timeDisplay);
-              return db - da;
-            });
-            const all = getAllPatientData();
-            if (!all[currentPatientName]) all[currentPatientName] = { sessions: [], created: new Date().toISOString() };
-            all[currentPatientName].sessions = merged;
-            saveAllPatientData(all);
-          }
-        }
+        await syncPullPatientSessions(currentPatientName);
       }
       _originalOpenProgressReport();
     };
