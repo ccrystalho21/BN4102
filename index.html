@@ -69,6 +69,418 @@
     }
 
     /* ================================================================
+       PATIENT LOGIN SCREEN
+       ================================================================ */
+    .patient-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--dark);
+      transition: opacity 0.6s, visibility 0.6s;
+    }
+
+    .patient-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .patient-header {
+      text-align: center;
+      margin-bottom: 40px;
+      animation: fadeUp 0.8s ease-out;
+    }
+
+    .patient-header .lotus-big {
+      font-size: 56px;
+      display: block;
+      margin-bottom: 16px;
+      animation: float-gentle 3s ease-in-out infinite;
+    }
+
+    .patient-header h1 {
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--gold);
+      text-shadow: 0 0 30px var(--gold-glow);
+      margin-bottom: 8px;
+    }
+
+    .patient-header p {
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--cream-dim);
+      letter-spacing: 2px;
+    }
+
+    .patient-form {
+      animation: fadeUp 0.8s ease-out 0.2s both;
+      text-align: center;
+      max-width: 440px;
+      width: 100%;
+      padding: 0 24px;
+    }
+
+    .patient-input-group {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .patient-input-group label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--cream-dim);
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    .patient-input {
+      width: 100%;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 500;
+      padding: 14px 20px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      background: rgba(42, 24, 16, 0.5);
+      color: var(--cream);
+      outline: none;
+      transition: all 0.3s;
+      letter-spacing: 0.5px;
+    }
+
+    .patient-input::placeholder {
+      color: rgba(191, 171, 136, 0.4);
+      font-style: italic;
+      font-weight: 300;
+    }
+
+    .patient-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(201, 168, 76, 0.12);
+    }
+
+    .patient-continue-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      padding: 14px 48px;
+      border-radius: 999px;
+      border: 1px solid var(--gold);
+      background: transparent;
+      color: var(--gold);
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 16px;
+    }
+
+    .patient-continue-btn:hover {
+      background: var(--gold);
+      color: var(--dark);
+      box-shadow: 0 0 30px var(--gold-glow);
+    }
+
+    .patient-continue-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    /* Recent patients list */
+    .recent-patients {
+      margin-top: 32px;
+      animation: fadeUp 0.8s ease-out 0.4s both;
+    }
+
+    .recent-patients-title {
+      font-size: 11px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--cream-dim);
+      margin-bottom: 14px;
+      opacity: 0.6;
+    }
+
+    .recent-patient-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .recent-patient-chip {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 20px;
+      border-radius: 999px;
+      border: 1px solid rgba(201, 168, 76, 0.15);
+      background: rgba(42, 24, 16, 0.4);
+      color: var(--cream-dim);
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .recent-patient-chip:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(42, 24, 16, 0.7);
+    }
+
+    .recent-patient-chip .chip-sessions {
+      font-size: 10px;
+      opacity: 0.5;
+      letter-spacing: 1px;
+    }
+
+    /* ================================================================
+       PROGRESS REPORT SCREEN
+       ================================================================ */
+    .progress-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 250;
+      display: flex;
+      flex-direction: column;
+      background: var(--dark);
+      transition: opacity 0.5s, visibility 0.5s;
+      overflow-y: auto;
+    }
+
+    .progress-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .progress-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 32px;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+      flex-shrink: 0;
+    }
+
+    .progress-back-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      padding: 8px 20px;
+      border-radius: 999px;
+      border: 1px solid rgba(201, 168, 76, 0.2);
+      background: transparent;
+      color: var(--cream-dim);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .progress-back-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .progress-title-bar {
+      text-align: center;
+    }
+
+    .progress-title-bar h2 {
+      font-family: 'Noto Serif Thai', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .progress-title-bar .patient-subtitle {
+      font-size: 13px;
+      color: var(--cream-dim);
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
+
+    .progress-export-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(201, 168, 76, 0.2);
+      background: transparent;
+      color: var(--cream-dim);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .progress-export-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .progress-content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      width: 100%;
+    }
+
+    /* Summary Cards */
+    .progress-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    .summary-card {
+      background: rgba(42, 24, 16, 0.5);
+      border: 1px solid rgba(201, 168, 76, 0.12);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .summary-card .summary-num {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--gold);
+      text-shadow: 0 0 20px var(--gold-glow);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .summary-card .summary-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--cream-dim);
+    }
+
+    /* Session Table */
+    .session-table-wrap {
+      background: rgba(42, 24, 16, 0.5);
+      border: 1px solid rgba(201, 168, 76, 0.12);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .session-table-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+    }
+
+    .session-table-header h3 {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      color: var(--gold);
+      opacity: 0.7;
+    }
+
+    .session-table-header .clear-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 12px;
+      color: var(--cream-dim);
+      background: none;
+      border: 1px solid rgba(201,168,76,0.1);
+      padding: 4px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: all 0.3s;
+    }
+
+    .session-table-header .clear-btn:hover {
+      opacity: 1;
+      border-color: var(--deep-red);
+      color: var(--lotus-pink);
+    }
+
+    .session-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .session-table th {
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--cream-dim);
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+      background: rgba(201, 168, 76, 0.03);
+    }
+
+    .session-table td {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--cream);
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.05);
+    }
+
+    .session-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .session-table .mode-pill {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(201, 168, 76, 0.15);
+    }
+
+    .session-table .mode-pill.free { color: var(--jade); border-color: rgba(90,158,122,0.3); }
+    .session-table .mode-pill.guided { color: var(--gold-light); border-color: rgba(201,168,76,0.3); }
+    .session-table .mode-pill.challenge { color: var(--lotus-pink); border-color: rgba(232,160,180,0.3); }
+
+    .session-table .level-text {
+      color: var(--cream-dim);
+      font-size: 13px;
+    }
+
+    .session-table .rises-num {
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .no-sessions {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--cream-dim);
+      font-size: 16px;
+      font-weight: 300;
+      font-style: italic;
+    }
+
+    .no-sessions .empty-icon {
+      font-size: 40px;
+      display: block;
+      margin-bottom: 12px;
+      opacity: 0.4;
+    }
+
+    /* ================================================================
        MODE SELECTION SCREEN
        ================================================================ */
     .mode-screen {
@@ -116,6 +528,41 @@
       font-weight: 300;
       color: var(--cream-dim);
       letter-spacing: 2px;
+    }
+
+    .mode-header .patient-welcome {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--gold-light);
+      margin-top: 8px;
+      font-style: italic;
+      letter-spacing: 1px;
+    }
+
+    .mode-header-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .mode-action-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      padding: 7px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(201, 168, 76, 0.2);
+      background: transparent;
+      color: var(--cream-dim);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .mode-action-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
     }
 
     .mode-cards {
@@ -182,10 +629,7 @@
 
     /* ================================================================
        CALIBRATION SCREEN
-       ================================================================
-       Full-screen overlay that guides the user through sitting and
-       standing calibration before the game starts.
-    */
+       ================================================================ */
     .calibration-screen {
       position: absolute;
       inset: 0;
@@ -318,7 +762,6 @@
 
     .calib-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* Calibration complete results */
     .calib-results {
       margin-top: 24px;
       padding: 20px;
@@ -422,6 +865,89 @@
     }
 
     .mode-badge:hover { border-color: var(--gold); color: var(--gold); }
+
+    .finish-session-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 11px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 6px 16px; border-radius: 999px;
+      border: 1px solid rgba(90, 158, 122, 0.35); background: rgba(90, 158, 122, 0.08);
+      color: var(--jade); cursor: pointer; transition: all 0.3s;
+      display: none; align-items: center; gap: 6px;
+    }
+
+    .finish-session-btn:hover {
+      border-color: var(--jade); background: rgba(90, 158, 122, 0.15);
+      box-shadow: 0 0 16px rgba(90, 158, 122, 0.15);
+    }
+
+    .finish-session-btn.visible { display: flex; }
+
+    /* Session saved confirmation overlay */
+    .session-saved-overlay {
+      position: fixed; inset: 0; z-index: 260;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: rgba(15, 10, 6, 0.88); backdrop-filter: blur(12px);
+      opacity: 0; visibility: hidden; pointer-events: none;
+      transition: opacity 0.4s, visibility 0.4s;
+    }
+
+    .session-saved-overlay.show {
+      opacity: 1; visibility: visible; pointer-events: auto;
+    }
+
+    .session-saved-card {
+      text-align: center; max-width: 420px; padding: 40px 36px;
+      background: rgba(42, 24, 16, 0.7); border: 1px solid rgba(201, 168, 76, 0.2);
+      border-radius: 20px; animation: fadeUp 0.5s ease-out;
+    }
+
+    .session-saved-icon { font-size: 56px; display: block; margin-bottom: 16px; }
+
+    .session-saved-title {
+      font-size: 26px; font-weight: 300; color: var(--gold-light); margin-bottom: 8px;
+    }
+
+    .session-saved-detail {
+      font-size: 14px; font-weight: 300; color: var(--cream-dim); line-height: 1.7; margin-bottom: 24px;
+    }
+
+    .session-saved-detail strong {
+      color: var(--gold); font-weight: 700;
+    }
+
+    .session-saved-actions {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+    }
+
+    .session-saved-actions button {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px; font-weight: 500; letter-spacing: 1.5px;
+      padding: 10px 28px; border-radius: 999px;
+      border: 1px solid var(--gold); background: transparent;
+      color: var(--gold); cursor: pointer; transition: all 0.3s;
+    }
+
+    .session-saved-actions button:hover {
+      background: var(--gold); color: var(--dark); box-shadow: 0 0 24px var(--gold-glow);
+    }
+
+    .session-saved-actions button.secondary {
+      border-color: rgba(201, 168, 76, 0.25); color: var(--cream-dim);
+    }
+
+    .session-saved-actions button.secondary:hover {
+      border-color: var(--gold); color: var(--gold); background: transparent; box-shadow: none;
+    }
+
+    .patient-badge {
+      font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 999px;
+      border: 1px solid rgba(90,158,122,0.2); color: var(--jade);
+      cursor: default;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .patient-badge .patient-icon { font-size: 12px; }
 
 
     /* ================================================================
@@ -539,6 +1065,222 @@
 
 
     /* ================================================================
+       AVATAR PICKER
+       ================================================================ */
+    .avatar-picker {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .avatar-option {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 2px solid rgba(201, 168, 76, 0.15);
+      background: rgba(42, 24, 16, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .avatar-option:hover {
+      border-color: var(--gold);
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(201, 168, 76, 0.15);
+    }
+
+    .avatar-option.selected {
+      border-color: var(--gold);
+      background: rgba(201, 168, 76, 0.12);
+      box-shadow: 0 0 24px var(--gold-glow);
+      transform: scale(1.12);
+    }
+
+    .avatar-option .av-name {
+      position: absolute;
+      bottom: -18px;
+      font-size: 9px;
+      letter-spacing: 1px;
+      color: var(--cream-dim);
+      white-space: nowrap;
+    }
+
+    /* ================================================================
+       LEADERBOARD
+       ================================================================ */
+    .lb-mode-tabs {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .lb-tab {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      padding: 8px 20px;
+      border-radius: 999px;
+      border: 1px solid rgba(201, 168, 76, 0.15);
+      background: transparent;
+      color: var(--cream-dim);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .lb-tab:hover { border-color: var(--gold); color: var(--gold); }
+    .lb-tab.active { border-color: var(--gold); background: rgba(201, 168, 76, 0.1); color: var(--gold); }
+
+    .lb-podium {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 12px;
+      margin-bottom: 32px;
+      min-height: 200px;
+    }
+
+    .lb-podium-item {
+      text-align: center;
+      width: 120px;
+    }
+
+    .lb-podium-avatar {
+      font-size: 42px;
+      margin-bottom: 6px;
+      display: block;
+      animation: float-gentle 3s ease-in-out infinite;
+    }
+
+    .lb-podium-item:nth-child(1) .lb-podium-avatar { animation-delay: 0.2s; }
+    .lb-podium-item:nth-child(3) .lb-podium-avatar { animation-delay: 0.4s; }
+
+    .lb-podium-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 4px;
+    }
+
+    .lb-podium-score {
+      font-size: 12px;
+      color: var(--cream-dim);
+      font-weight: 300;
+      margin-bottom: 8px;
+    }
+
+    .lb-podium-bar {
+      width: 100%;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 8px;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .lb-podium-item.first .lb-podium-bar {
+      height: 120px;
+      background: linear-gradient(180deg, rgba(201,168,76,0.3), rgba(201,168,76,0.08));
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      color: var(--gold);
+    }
+
+    .lb-podium-item.second .lb-podium-bar {
+      height: 90px;
+      background: linear-gradient(180deg, rgba(191,171,136,0.2), rgba(191,171,136,0.05));
+      border: 1px solid rgba(191, 171, 136, 0.2);
+      color: var(--cream-dim);
+    }
+
+    .lb-podium-item.third .lb-podium-bar {
+      height: 65px;
+      background: linear-gradient(180deg, rgba(139,26,26,0.2), rgba(139,26,26,0.05));
+      border: 1px solid rgba(139, 26, 26, 0.25);
+      color: var(--deep-red);
+    }
+
+    .lb-rest-list {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .lb-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.06);
+    }
+
+    .lb-rank {
+      font-size: 13px;
+      color: var(--cream-dim);
+      min-width: 28px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .lb-row-avatar { font-size: 24px; }
+
+    .lb-row-name {
+      flex: 1;
+      font-size: 15px;
+      color: var(--cream);
+      font-weight: 500;
+    }
+
+    .lb-row-score {
+      font-size: 14px;
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .lb-row-label {
+      font-size: 10px;
+      color: var(--cream-dim);
+      letter-spacing: 1px;
+    }
+
+    .lb-empty {
+      text-align: center;
+      padding: 48px;
+      color: var(--cream-dim);
+      font-size: 16px;
+      font-weight: 300;
+      font-style: italic;
+    }
+
+    .lb-row.highlight {
+      background: rgba(201, 168, 76, 0.05);
+      border-radius: var(--radius);
+    }
+    .avatar-particle {
+      position: absolute;
+      pointer-events: none;
+      z-index: 4;
+      font-size: 18px;
+      opacity: 0;
+      animation: avatar-particle-rise 2s ease-out forwards;
+    }
+
+    @keyframes avatar-particle-rise {
+      0%   { opacity: 0.9; transform: translateY(0) scale(1) rotate(0deg); }
+      50%  { opacity: 0.7; }
+      100% { opacity: 0; transform: translateY(-80px) scale(0.4) rotate(45deg); }
+    }
+
+
+    /* ================================================================
        SIDE PANEL & CARDS
        ================================================================ */
     .panel { display: flex; flex-direction: column; gap: 14px; }
@@ -604,6 +1346,177 @@
     @keyframes float-gentle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes pulse-dot { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.4; } }
+
+    /* Responsive table */
+    @media (max-width: 600px) {
+      .session-table th, .session-table td { padding: 8px 10px; font-size: 12px; }
+      .progress-top-bar { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
+      .progress-summary { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ================================================================
+       PROGRESS CHARTS
+       ================================================================ */
+    .progress-charts {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    .chart-card {
+      background: rgba(42, 24, 16, 0.5);
+      border: 1px solid rgba(201, 168, 76, 0.12);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .chart-card h4 {
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      color: var(--gold);
+      margin-bottom: 16px;
+      opacity: 0.7;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 180px;
+    }
+
+    .chart-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .chart-grid-line {
+      stroke: rgba(201, 168, 76, 0.08);
+      stroke-width: 1;
+    }
+
+    .chart-axis-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 10px;
+      fill: rgba(191, 171, 136, 0.5);
+    }
+
+    .chart-line {
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .chart-line-rises { stroke: var(--gold); }
+    .chart-line-level { stroke: var(--lotus-pink); }
+    .chart-line-duration { stroke: var(--jade); }
+
+    .chart-area-rises {
+      fill: url(#goldGradient);
+    }
+    .chart-area-level {
+      fill: url(#pinkGradient);
+    }
+    .chart-area-duration {
+      fill: url(#jadeGradient);
+    }
+
+    .chart-dot {
+      stroke-width: 2;
+      cursor: default;
+      transition: r 0.2s;
+    }
+
+    .chart-dot:hover { r: 5; }
+
+    .chart-dot-rises { fill: var(--dark); stroke: var(--gold); }
+    .chart-dot-level { fill: var(--dark); stroke: var(--lotus-pink); }
+    .chart-dot-duration { fill: var(--dark); stroke: var(--jade); }
+
+    .chart-tooltip {
+      position: absolute;
+      pointer-events: none;
+      background: rgba(42, 24, 16, 0.92);
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--cream);
+      opacity: 0;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+      z-index: 5;
+      backdrop-filter: blur(6px);
+    }
+
+    .chart-tooltip.visible { opacity: 1; }
+
+    .chart-tooltip .tt-date { font-size: 10px; color: var(--cream-dim); letter-spacing: 1px; margin-bottom: 3px; }
+    .chart-tooltip .tt-value { font-weight: 700; color: var(--gold); }
+
+    .chart-legend {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .chart-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--cream-dim);
+      font-weight: 300;
+    }
+
+    .chart-legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .chart-legend-dot.gold { background: var(--gold); }
+    .chart-legend-dot.pink { background: var(--lotus-pink); }
+    .chart-legend-dot.jade { background: var(--jade); }
+
+    .chart-no-data {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 180px;
+      font-size: 13px;
+      color: var(--cream-dim);
+      font-style: italic;
+      font-weight: 300;
+      opacity: 0.6;
+    }
+
+    .progress-charts-inner {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .chart-inner-col {
+      min-width: 0;
+    }
+
+    .chart-inner-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--cream-dim);
+      margin-bottom: 8px;
+      opacity: 0.6;
+    }
+
   </style>
 </head>
 
@@ -612,13 +1525,80 @@
   <div class="thai-border-top"></div>
 
   <!-- ============================================================
+       PATIENT LOGIN SCREEN
+       ============================================================ -->
+  <div class="patient-screen" id="patientScreen">
+    <div class="patient-header">
+      <span class="lotus-big">🪷</span>
+      <h1>รำไทย</h1>
+      <p>Thai Dance Rehabilitation</p>
+    </div>
+    <div class="patient-form">
+      <div class="patient-input-group">
+        <label for="patientNameInput">Patient Name</label>
+        <input
+          type="text"
+          class="patient-input"
+          id="patientNameInput"
+          placeholder="Enter patient's name…"
+          autocomplete="off"
+          onkeydown="if(event.key==='Enter') confirmPatient()"
+          oninput="const v=this.value.trim(); document.getElementById('patientContinueBtn').disabled=!v; if(v){const saved=getPatientAvatar(v); currentAvatar=saved; renderAvatarPicker(saved);} else {document.getElementById('avatarPickerGroup').style.display='none';}"
+        >
+      </div>
+      <div class="patient-input-group" id="avatarPickerGroup" style="display:none;">
+        <label>Choose Your Avatar</label>
+        <div class="avatar-picker" id="avatarPicker"></div>
+      </div>
+      <button class="patient-continue-btn" id="patientContinueBtn" onclick="confirmPatient()" disabled>
+        Continue →
+      </button>
+      <div class="recent-patients" id="recentPatients"></div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       PROGRESS REPORT SCREEN
+       ============================================================ -->
+  <div class="progress-screen hidden" id="progressScreen">
+    <div class="progress-top-bar">
+      <button class="progress-back-btn" onclick="closeProgressReport()">← Back</button>
+      <div class="progress-title-bar">
+        <h2>Progress Report</h2>
+        <div class="patient-subtitle" id="progressPatientName"></div>
+      </div>
+      <button class="progress-export-btn" onclick="exportProgressCSV()">Export CSV</button>
+    </div>
+    <div class="progress-content">
+      <div class="progress-summary" id="progressSummary"></div>
+      <div class="progress-charts" id="progressCharts"></div>
+      <div class="session-table-wrap">
+        <div class="session-table-header">
+          <h3>Session History</h3>
+          <button class="clear-btn" onclick="clearPatientSessions()">Clear All</button>
+        </div>
+        <div id="sessionTableBody"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
        MODE SELECTION
        ============================================================ -->
-  <div class="mode-screen" id="modeScreen">
+  <div class="mode-screen hidden" id="modeScreen">
     <div class="mode-header">
       <span class="lotus-big">🪷</span>
       <h1>รำไทย</h1>
       <p>Thai Dance Rehabilitation</p>
+      <div class="patient-welcome" id="patientWelcome"></div>
+      <div class="avatar-picker" id="modeAvatarPicker" style="margin:16px auto 12px;max-width:420px;"></div>
+      <div class="mode-header-actions">
+        <button class="mode-action-btn" onclick="openProgressReport()">📋 Progress Report</button>
+        <button class="mode-action-btn" onclick="openLeaderboard()">🏆 Leaderboard</button>
+        <button class="mode-action-btn" onclick="switchPatient()">👤 Switch Patient</button>
+      </div>
     </div>
     <div class="mode-cards">
       <div class="mode-card" onclick="selectMode('free')">
@@ -642,11 +1622,24 @@
     </div>
   </div>
 
-
   <!-- ============================================================
-       CALIBRATION SCREEN
+       LEADERBOARD SCREEN
        ============================================================ -->
-  <!-- Calibration screen is now inside the video container below -->
+  <div class="progress-screen hidden" id="leaderboardScreen">
+    <div class="progress-top-bar">
+      <button class="progress-back-btn" onclick="closeLeaderboard()">← Back</button>
+      <div class="progress-title-bar">
+        <h2>🏆 Weekly Leaderboard</h2>
+        <div style="display:flex;align-items:center;gap:12px;justify-content:center;margin-top:6px;">
+          <button class="progress-back-btn" style="padding:6px 14px;font-size:16px;" onclick="shiftLeaderboardWeek(-1)">‹</button>
+          <div class="patient-subtitle" id="leaderboardWeek" style="min-width:180px;text-align:center;"></div>
+          <button class="progress-back-btn" id="lbNextBtn" style="padding:6px 14px;font-size:16px;" onclick="shiftLeaderboardWeek(1)">›</button>
+        </div>
+      </div>
+      <div style="width:80px;"></div>
+    </div>
+    <div class="progress-content" id="leaderboardContent"></div>
+  </div>
 
 
   <!-- ============================================================
@@ -658,11 +1651,16 @@
       <span class="logo-en">Thai Dance Rehab</span>
     </div>
     <div class="header-right">
+      <div class="patient-badge" id="headerPatientBadge" style="display:none;">
+        <span class="patient-icon" id="headerPatientIcon">👤</span>
+        <span id="headerPatientName"></span>
+      </div>
       <div class="music-controls">
         <button class="music-btn" id="musicBtn" onclick="toggleMusic()" title="Toggle music">♫</button>
         <input type="range" class="vol-slider" id="volSlider" min="0" max="100" value="50" oninput="setMusicVolume(this.value)">
       </div>
       <div class="mode-badge" id="modeBadge" onclick="backToModes()">Free Practice</div>
+      <button class="finish-session-btn" id="finishSessionBtn" onclick="finishSession()">✓ Session Finished</button>
       <div class="status-pill" id="statusPill">
         <div class="dot"></div>
         <span id="statusText">Awaiting</span>
@@ -738,7 +1736,6 @@
       <div class="card">
         <h3>Body Metrics</h3>
         <div class="metric"><span class="metric-label">Hip Height</span><span class="metric-value" id="hipHeight">—</span></div>
-        <div class="metric"><span class="metric-label">Knee Angle</span><span class="metric-value" id="kneeAngle">—</span></div>
         <div class="metric"><span class="metric-label">Confidence</span><span class="metric-value" id="confidence">—</span></div>
       </div>
       <div class="card">
@@ -759,27 +1756,35 @@
     </div>
   </main>
 
-  <footer>Runs entirely in your browser · No data leaves your device · TensorFlow.js + MoveNet</footer>
+  <footer>Runs entirely in your browser · Patient data stored locally · TensorFlow.js + MoveNet</footer>
+  <!-- Session Saved Overlay -->
+  <div class="session-saved-overlay" id="sessionSavedOverlay">
+    <div class="session-saved-card">
+      <span class="session-saved-icon">🪷</span>
+      <div class="session-saved-title">Session Saved</div>
+      <div class="session-saved-detail" id="sessionSavedDetail"></div>
+      <div class="session-saved-actions">
+        <button onclick="viewProgressAfterSave()">View Progress Report</button>
+        <button class="secondary" onclick="returnToModesAfterSave()">Back to Modes</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
 
   <script>
     /* ================================================================
        CONFIGURATION
-       ================================================================
-       These start as defaults but get OVERWRITTEN by calibration.
-       After calibration, the thresholds are personalized.
-    */
+       ================================================================ */
     const CONFIG = {
-      // These will be overwritten by calibration:
-      STANDING_KNEE_ANGLE: 135,
-      SITTING_KNEE_ANGLE: 115,
-      STANDING_TORSO_LENGTH: 0.12,
+      // Hip-based detection (calibration overwrites these):
+      STANDING_HIP_Y: 0.45,      // normalized hip Y when standing (lower = higher in frame)
+      SITTING_HIP_Y: 0.55,       // normalized hip Y when sitting
 
-      // These stay fixed:
       MIN_CONFIDENCE: 0.25,
       STABLE_FRAMES_NEEDED: 10,
-      HISTORY_SIZE: 15,
+      HISTORY_SIZE: 20,
       HIP_RISE_FACTOR: 0.5,
       HIP_DROP_FACTOR: 0.3,
       DRAW_MIN_SCORE: 0.2,
@@ -790,24 +1795,612 @@
       CAMERA_WIDTH: 640,
       CAMERA_HEIGHT: 480,
       CAMERA_FACING: 'user',
-
-      // Calibration settings:
-      CALIBRATION_BUFFER: 0.3,            // 30% buffer between sit/stand midpoint
-      CALIB_STABLE_SECONDS: 2,            // how long user must hold steady to lock in
-      CALIB_VARIANCE_THRESHOLD: 3,        // max degrees of knee angle wobble to count as "steady"
-      CALIB_SAMPLES_PER_SEC: 10,          // measurement frequency
+      CALIBRATION_BUFFER: 0.3,
+      CALIB_STABLE_SECONDS: 2,
+      CALIB_VARIANCE_THRESHOLD: 3,
+      CALIB_SAMPLES_PER_SEC: 10,
     };
 
 
     /* ================================================================
-       CALIBRATION STATE
+       PATIENT TRACKING SYSTEM
        ================================================================ */
+    let currentPatientName = '';
+    let sessionStartTime = null;
+    let currentAvatar = '🐱';
+
+    const STORAGE_KEY = 'thaiDanceRehab_patients';
+
+    /* ================================================================
+       AVATAR SYSTEM
+       ================================================================ */
+    const AVATARS = [
+      { emoji: '🐱', name: 'Cat' },
+      { emoji: '🐶', name: 'Dog' },
+      { emoji: '🐰', name: 'Bunny' },
+      { emoji: '🐼', name: 'Panda' },
+      { emoji: '🦊', name: 'Fox' },
+      { emoji: '🐨', name: 'Koala' },
+      { emoji: '🦁', name: 'Lion' },
+      { emoji: '🐸', name: 'Frog' },
+      { emoji: '🦉', name: 'Owl' },
+      { emoji: '🐧', name: 'Penguin' },
+      { emoji: '🦋', name: 'Butterfly' },
+      { emoji: '🐢', name: 'Turtle' },
+    ];
+
+    function renderAvatarPicker(preselected) {
+      const picker = document.getElementById('avatarPicker');
+      picker.innerHTML = AVATARS.map(a =>
+        `<div class="avatar-option ${a.emoji === preselected ? 'selected' : ''}" onclick="selectAvatar('${a.emoji}')">
+          ${a.emoji}
+          <span class="av-name">${a.name}</span>
+        </div>`
+      ).join('');
+      document.getElementById('avatarPickerGroup').style.display = 'block';
+    }
+
+    function selectAvatar(emoji) {
+      currentAvatar = emoji;
+      // Update all avatar option highlights
+      document.querySelectorAll('.avatar-option').forEach(el => {
+        el.classList.toggle('selected', el.textContent.trim().startsWith(emoji));
+      });
+      // Save immediately
+      if (currentPatientName) {
+        savePatientAvatar(currentPatientName, emoji);
+      }
+      // Update header and welcome text
+      document.getElementById('headerPatientIcon').textContent = emoji;
+      const welcome = document.getElementById('patientWelcome');
+      if (welcome && currentPatientName) {
+        welcome.innerHTML = emoji + ' ' + currentPatientName;
+      }
+    }
+
+    function renderModeAvatarPicker() {
+      const picker = document.getElementById('modeAvatarPicker');
+      if (!picker) return;
+      picker.innerHTML = AVATARS.map(a =>
+        `<div class="avatar-option ${a.emoji === currentAvatar ? 'selected' : ''}" onclick="selectAvatar('${a.emoji}')">
+          ${a.emoji}
+          <span class="av-name">${a.name}</span>
+        </div>`
+      ).join('');
+    }
+
+    function getPatientAvatar(name) {
+      const all = getAllPatientData();
+      return (all[name] && all[name].avatar) || '🐱';
+    }
+
+    function savePatientAvatar(name, emoji) {
+      const all = getAllPatientData();
+      if (!all[name]) all[name] = { sessions: [], created: new Date().toISOString() };
+      all[name].avatar = emoji;
+      saveAllPatientData(all);
+    }
+
+    function getAllPatientData() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch(e) { return {}; }
+    }
+
+    function saveAllPatientData(data) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch(e) { console.error('Storage error:', e); }
+    }
+
+    function getPatientSessions(name) {
+      const all = getAllPatientData();
+      return (all[name] && all[name].sessions) || [];
+    }
+
+    function addPatientSession(name, sessionData) {
+      const all = getAllPatientData();
+      if (!all[name]) all[name] = { sessions: [], created: new Date().toISOString() };
+      all[name].sessions.unshift(sessionData); // newest first
+      all[name].lastVisit = new Date().toISOString();
+      saveAllPatientData(all);
+    }
+
+    function getRecentPatients() {
+      const all = getAllPatientData();
+      return Object.keys(all)
+        .map(name => ({ name, sessions: all[name].sessions.length, lastVisit: all[name].lastVisit || all[name].created }))
+        .sort((a, b) => new Date(b.lastVisit) - new Date(a.lastVisit))
+        .slice(0, 8);
+    }
+
+    function renderRecentPatients() {
+      const recent = getRecentPatients();
+      const container = document.getElementById('recentPatients');
+      if (recent.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+      let html = '<div class="recent-patients-title">Recent Patients</div><div class="recent-patient-list">';
+      recent.forEach(p => {
+        const av = getPatientAvatar(p.name);
+        html += `<div class="recent-patient-chip" onclick="selectRecentPatient('${p.name.replace(/'/g, "\\'")}')">
+          <span style="font-size:18px;">${av}</span>
+          ${p.name}
+          <span class="chip-sessions">${p.sessions} session${p.sessions !== 1 ? 's' : ''}</span>
+        </div>`;
+      });
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    function selectRecentPatient(name) {
+      document.getElementById('patientNameInput').value = name;
+      document.getElementById('patientContinueBtn').disabled = false;
+      // Load their saved avatar
+      currentAvatar = getPatientAvatar(name);
+      renderAvatarPicker(currentAvatar);
+      confirmPatient();
+    }
+
+    function confirmPatient() {
+      const input = document.getElementById('patientNameInput');
+      const name = input.value.trim();
+      if (!name) return;
+      currentPatientName = name;
+
+      // Save avatar choice
+      savePatientAvatar(name, currentAvatar);
+
+      // Update UI
+      document.getElementById('patientWelcome').innerHTML = currentAvatar + ' ' + name;
+      document.getElementById('headerPatientIcon').textContent = currentAvatar;
+      document.getElementById('headerPatientName').textContent = name;
+      document.getElementById('headerPatientBadge').style.display = 'flex';
+
+      // Render avatar picker on mode screen
+      renderModeAvatarPicker();
+
+      // Transition to mode screen
+      document.getElementById('patientScreen').classList.add('hidden');
+      document.getElementById('modeScreen').classList.remove('hidden');
+    }
+
+    function switchPatient() {
+      // Save current session if running
+      if (isRunning) saveCurrentSession();
+
+      // Reset everything
+      isRunning = false;
+      stopMusic();
+      if (challengeTimer) { clearInterval(challengeTimer); challengeTimer = null; }
+      standUpCount = 0; levelStands = 0; currentLevelIndex = 0;
+      currentPose = 'unknown'; previousPose = 'unknown'; hipHeightHistory = [];
+
+      document.getElementById('modeScreen').classList.add('hidden');
+      document.getElementById('patientScreen').classList.remove('hidden');
+      document.getElementById('patientNameInput').value = '';
+      document.getElementById('patientContinueBtn').disabled = true;
+      document.getElementById('headerPatientBadge').style.display = 'none';
+      document.getElementById('finishSessionBtn').classList.remove('visible');
+      document.getElementById('avatarPickerGroup').style.display = 'none';
+      currentAvatar = '🐱';
+      renderRecentPatients();
+    }
+
+    function saveCurrentSession() {
+      if (!currentPatientName || !sessionStartTime) return;
+      if (standUpCount === 0) return; // don't save empty sessions
+
+      const session = {
+        date: sessionStartTime.toISOString(),
+        dateDisplay: sessionStartTime.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        timeDisplay: sessionStartTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+        mode: gameMode,
+        modeLabel: MODE_INFO[gameMode].label,
+        totalRises: standUpCount,
+        levelReached: gameMode === 'guided' ? (currentLevelIndex + 1) : null,
+        levelName: gameMode === 'guided' ? LEVELS[currentLevelIndex].name : null,
+        levelsCompleted: gameMode === 'guided' ? currentLevelIndex : null,
+        duration: Math.round((Date.now() - sessionStartTime.getTime()) / 1000),
+        sensitivity: sensitivity,
+      };
+
+      addPatientSession(currentPatientName, session);
+      syncWriteSession(currentPatientName, session); // cloud sync
+      stopRecordingAndUpload(); // upload video to Google Drive
+      sessionStartTime = null; // prevent double-save
+    }
+
+
+    /* ================================================================
+       PROGRESS REPORT
+       ================================================================ */
+    function openProgressReport() {
+      const sessions = getPatientSessions(currentPatientName);
+      document.getElementById('progressPatientName').textContent = currentPatientName;
+
+      // Summary stats
+      const totalSessions = sessions.length;
+      const totalRises = sessions.reduce((sum, s) => sum + (s.totalRises || 0), 0);
+      const guidedSessions = sessions.filter(s => s.mode === 'guided');
+      const highestLevel = guidedSessions.length > 0
+        ? Math.max(...guidedSessions.map(s => s.levelReached || 1))
+        : 0;
+      const avgRises = totalSessions > 0 ? Math.round(totalRises / totalSessions) : 0;
+
+      document.getElementById('progressSummary').innerHTML = `
+        <div class="summary-card">
+          <div class="summary-num">${totalSessions}</div>
+          <div class="summary-label">Total Sessions</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-num">${totalRises}</div>
+          <div class="summary-label">Total Rises</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-num">${highestLevel > 0 ? highestLevel + '/5' : '—'}</div>
+          <div class="summary-label">Highest Level</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-num">${avgRises}</div>
+          <div class="summary-label">Avg Rises / Session</div>
+        </div>
+      `;
+
+      // Session table
+      if (sessions.length === 0) {
+        document.getElementById('sessionTableBody').innerHTML = `
+          <div class="no-sessions">
+            <span class="empty-icon">🪷</span>
+            No sessions recorded yet. Start a dance to begin tracking progress.
+          </div>
+        `;
+      } else {
+        let tableHTML = `<table class="session-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Mode</th>
+              <th>Level</th>
+              <th>Rises</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>`;
+
+        sessions.forEach(s => {
+          const durationMin = s.duration ? Math.floor(s.duration / 60) : 0;
+          const durationSec = s.duration ? s.duration % 60 : 0;
+          const durationStr = durationMin > 0 ? durationMin + 'm ' + durationSec + 's' : durationSec + 's';
+
+          let levelStr = '—';
+          if (s.mode === 'guided' && s.levelReached) {
+            levelStr = 'Lvl ' + s.levelReached + '/5';
+            if (s.levelName) levelStr += '<br><span style="font-size:11px;color:var(--cream-dim);">' + s.levelName + '</span>';
+          } else if (s.mode === 'challenge') {
+            levelStr = 'N/A';
+          }
+
+          tableHTML += `<tr>
+            <td>${s.dateDisplay || '—'}</td>
+            <td>${s.timeDisplay || '—'}</td>
+            <td><span class="mode-pill ${s.mode}">${s.modeLabel || s.mode}</span></td>
+            <td class="level-text">${levelStr}</td>
+            <td class="rises-num">${s.totalRises || 0} 🪷</td>
+            <td>${durationStr}</td>
+          </tr>`;
+        });
+
+        tableHTML += '</tbody></table>';
+        document.getElementById('sessionTableBody').innerHTML = tableHTML;
+      }
+
+      document.getElementById('progressScreen').classList.remove('hidden');
+      renderProgressCharts(sessions);
+    }
+
+    function closeProgressReport() {
+      document.getElementById('progressScreen').classList.add('hidden');
+    }
+
+    function clearPatientSessions() {
+      if (!confirm('Clear all session data for ' + currentPatientName + '? This cannot be undone.')) return;
+      const all = getAllPatientData();
+      if (all[currentPatientName]) {
+        all[currentPatientName].sessions = [];
+        saveAllPatientData(all);
+      }
+      openProgressReport(); // refresh
+    }
+
+    function exportProgressCSV() {
+      const sessions = getPatientSessions(currentPatientName);
+      if (sessions.length === 0) { alert('No sessions to export.'); return; }
+
+      let csv = 'Patient,Date,Time,Mode,Level Reached,Level Name,Total Rises,Duration (s),Sensitivity\n';
+      sessions.forEach(s => {
+        csv += [
+          '"' + currentPatientName + '"',
+          s.dateDisplay || '',
+          s.timeDisplay || '',
+          s.modeLabel || s.mode,
+          s.levelReached || '',
+          s.levelName || '',
+          s.totalRises || 0,
+          s.duration || 0,
+          s.sensitivity || ''
+        ].join(',') + '\n';
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = currentPatientName.replace(/\s+/g, '_') + '_progress_report.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+
+    /* ================================================================
+       PROGRESS CHARTS (pure SVG, no dependencies)
+       ================================================================ */
+    function renderProgressCharts(sessions) {
+      const container = document.getElementById('progressCharts');
+
+      if (sessions.length < 2) {
+        container.innerHTML = `
+          <div class="chart-card" style="grid-column: 1 / -1;">
+            <h4>Progress Over Time</h4>
+            <div class="chart-no-data">At least 2 sessions needed to show charts</div>
+          </div>
+        `;
+        return;
+      }
+
+      // Sessions are stored newest-first, reverse for chronological charting
+      const chronological = [...sessions].reverse();
+
+      // Group by mode
+      const modeGroups = {
+        free: chronological.filter(s => s.mode === 'free'),
+        guided: chronological.filter(s => s.mode === 'guided'),
+        challenge: chronological.filter(s => s.mode === 'challenge'),
+      };
+
+      const modeConfig = {
+        free:      { label: 'Free Practice',     icon: '🌿', color: 'jade',  lineClass: 'duration' },
+        guided:    { label: 'Guided Dance',      icon: '🪷', color: 'gold',  lineClass: 'rises' },
+        challenge: { label: 'Festival Challenge', icon: '🔥', color: 'pink',  lineClass: 'level' },
+      };
+
+      let html = '';
+      let chartIds = []; // track ids for tooltip attachment
+
+      for (const [mode, data] of Object.entries(modeGroups)) {
+        if (data.length < 2) continue; // need at least 2 sessions for a line
+        const maxData = data.slice(-20);
+        const cfg = modeConfig[mode];
+        const uid = 'chart_' + mode;
+
+        html += `<div class="chart-card" style="grid-column: 1 / -1;">`;
+        html += `<h4>${cfg.icon} ${cfg.label}</h4>`;
+        html += `<div class="progress-charts-inner">`;
+
+        // Rises chart
+        const risesId = uid + '_rises';
+        html += `<div class="chart-inner-col">`;
+        html += `<div class="chart-inner-label">Rises</div>`;
+        html += `<div class="chart-container" id="${risesId}">${buildLineChart(maxData, 'rises', cfg.color)}</div>`;
+        html += `</div>`;
+        chartIds.push({ id: risesId, data: maxData, type: 'rises' });
+
+        // Duration chart
+        const durId = uid + '_duration';
+        html += `<div class="chart-inner-col">`;
+        html += `<div class="chart-inner-label">Duration</div>`;
+        html += `<div class="chart-container" id="${durId}">${buildLineChart(maxData, 'duration', cfg.color)}</div>`;
+        html += `</div>`;
+        chartIds.push({ id: durId, data: maxData, type: 'duration' });
+
+        // Level chart for guided mode
+        if (mode === 'guided') {
+          const lvlId = uid + '_level';
+          html += `<div class="chart-inner-col">`;
+          html += `<div class="chart-inner-label">Level Reached</div>`;
+          html += `<div class="chart-container" id="${lvlId}">${buildLineChart(maxData, 'level', cfg.color)}</div>`;
+          html += `</div>`;
+          chartIds.push({ id: lvlId, data: maxData, type: 'level' });
+        }
+
+        html += `</div></div>`;
+      }
+
+      if (!html) {
+        html = `
+          <div class="chart-card" style="grid-column: 1 / -1;">
+            <h4>Progress Over Time</h4>
+            <div class="chart-no-data">At least 2 sessions in any mode needed to show charts</div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+
+      // Attach tooltips after DOM is ready
+      chartIds.forEach(c => attachChartTooltips(c.id, c.data, c.type));
+    }
+
+    function buildLineChart(data, type, color) {
+      const W = 400, H = 160;
+      const padL = 36, padR = 12, padT = 12, padB = 28;
+      const plotW = W - padL - padR;
+      const plotH = H - padT - padB;
+
+      // Extract values
+      let values;
+      if (type === 'rises') {
+        values = data.map(s => s.totalRises || 0);
+      } else if (type === 'level') {
+        values = data.map(s => s.levelReached || 1);
+      } else {
+        values = data.map(s => Math.round((s.duration || 0) / 60 * 10) / 10);
+      }
+
+      const maxVal = Math.max(...values, 1);
+      const niceMax = type === 'level' ? 5 : getNiceMax(maxVal);
+      const gridLines = type === 'level' ? 5 : 4;
+
+      // Points
+      const points = values.map((v, i) => ({
+        x: padL + (data.length === 1 ? plotW / 2 : (i / (data.length - 1)) * plotW),
+        y: padT + plotH - (v / niceMax) * plotH,
+        val: v,
+        idx: i
+      }));
+
+      // Build path
+      const linePath = points.map((p, i) => (i === 0 ? 'M' : 'L') + p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
+
+      // Area path
+      const areaPath = linePath
+        + ' L' + points[points.length - 1].x.toFixed(1) + ',' + (padT + plotH)
+        + ' L' + points[0].x.toFixed(1) + ',' + (padT + plotH) + ' Z';
+
+      // Color mapping
+      const colorMap = {
+        gold: { stroke: 'var(--gold)', fill: 'rgba(201,168,76,0.25)', fillEnd: 'rgba(201,168,76,0)', dot: 'var(--gold)' },
+        jade: { stroke: 'var(--jade)', fill: 'rgba(90,158,122,0.25)', fillEnd: 'rgba(90,158,122,0)', dot: 'var(--jade)' },
+        pink: { stroke: 'var(--lotus-pink)', fill: 'rgba(232,160,180,0.25)', fillEnd: 'rgba(232,160,180,0)', dot: 'var(--lotus-pink)' },
+      };
+      const c = colorMap[color] || colorMap.gold;
+
+      // Unique gradient ID
+      const gradUid = 'grad_' + color + '_' + type + '_' + Math.random().toString(36).slice(2, 7);
+
+      let svg = `<svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">`;
+
+      svg += `<defs>
+        <linearGradient id="${gradUid}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${c.fill}"/>
+          <stop offset="100%" stop-color="${c.fillEnd}"/>
+        </linearGradient>
+      </defs>`;
+
+      // Grid lines + Y labels
+      for (let i = 0; i <= gridLines; i++) {
+        const y = padT + (i / gridLines) * plotH;
+        const val = niceMax - (i / gridLines) * niceMax;
+        svg += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" class="chart-grid-line"/>`;
+        const label = type === 'level' ? Math.round(val) : formatAxisVal(val);
+        svg += `<text x="${padL - 6}" y="${y + 3}" class="chart-axis-label" text-anchor="end">${label}</text>`;
+      }
+
+      // X labels
+      const labelIndices = getXLabelIndices(data.length);
+      labelIndices.forEach(i => {
+        if (i < points.length) {
+          const label = data[i].dateDisplay ? data[i].dateDisplay.replace(/\s\d{4}$/, '') : '#' + (i + 1);
+          svg += `<text x="${points[i].x}" y="${H - 4}" class="chart-axis-label" text-anchor="middle">${label}</text>`;
+        }
+      });
+
+      // Area
+      svg += `<path d="${areaPath}" fill="url(#${gradUid})"/>`;
+
+      // Line
+      svg += `<path d="${linePath}" fill="none" stroke="${c.stroke}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+      // Dots
+      points.forEach((p, i) => {
+        svg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="var(--dark)" stroke="${c.dot}" stroke-width="2" style="cursor:default;transition:r 0.2s" data-idx="${i}" onmouseenter="this.setAttribute('r','5')" onmouseleave="this.setAttribute('r','3.5')"/>`;
+      });
+
+      svg += `</svg>`;
+      svg += `<div class="chart-tooltip"></div>`;
+
+      return svg;
+    }
+
+    function getNiceMax(val) {
+      if (val <= 5) return 5;
+      if (val <= 10) return 10;
+      if (val <= 20) return 20;
+      const magnitude = Math.pow(10, Math.floor(Math.log10(val)));
+      const residual = val / magnitude;
+      if (residual <= 1.5) return 1.5 * magnitude;
+      if (residual <= 2) return 2 * magnitude;
+      if (residual <= 3) return 3 * magnitude;
+      if (residual <= 5) return 5 * magnitude;
+      return 10 * magnitude;
+    }
+
+    function formatAxisVal(v) {
+      if (v >= 1000) return (v / 1000).toFixed(0) + 'k';
+      if (Number.isInteger(v)) return v;
+      return v.toFixed(1);
+    }
+
+    function getXLabelIndices(len) {
+      if (len <= 5) return Array.from({ length: len }, (_, i) => i);
+      const step = Math.ceil(len / 5);
+      const indices = [];
+      for (let i = 0; i < len; i += step) indices.push(i);
+      if (indices[indices.length - 1] !== len - 1) indices.push(len - 1);
+      return indices;
+    }
+
+    function attachChartTooltips(containerId, data, type) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      const tooltip = container.querySelector('.chart-tooltip');
+      if (!tooltip) return;
+
+      const dots = container.querySelectorAll('circle[data-idx]');
+      dots.forEach(dot => {
+        dot.addEventListener('mouseenter', (e) => {
+          const idx = parseInt(dot.getAttribute('data-idx'));
+          const s = data[idx];
+          let valText;
+          if (type === 'rises') {
+            valText = (s.totalRises || 0) + ' rises';
+          } else if (type === 'level') {
+            valText = 'Level ' + (s.levelReached || 1) + '/5';
+            if (s.levelName) valText += ' — ' + s.levelName;
+          } else {
+            const min = Math.floor((s.duration || 0) / 60);
+            const sec = (s.duration || 0) % 60;
+            valText = min > 0 ? min + 'm ' + sec + 's' : sec + 's';
+          }
+          const dateText = (s.dateDisplay || '') + ' ' + (s.timeDisplay || '');
+
+          tooltip.innerHTML = `<div class="tt-date">${dateText}</div><div class="tt-value">${valText}</div>`;
+          tooltip.classList.add('visible');
+
+          const rect = container.getBoundingClientRect();
+          const dotRect = dot.getBoundingClientRect();
+          let left = dotRect.left - rect.left + dotRect.width / 2;
+          let top = dotRect.top - rect.top - 48;
+
+          tooltip.style.left = left + 'px';
+          tooltip.style.top = top + 'px';
+          tooltip.style.transform = 'translateX(-50%)';
+        });
+
+        dot.addEventListener('mouseleave', () => {
+          tooltip.classList.remove('visible');
+        });
+      });
+    }
     let calibrationData = {
-      sitting: { kneeAngles: [], hipYs: [], torsoLengths: [] },
-      standing: { kneeAngles: [], hipYs: [], torsoLengths: [] },
+      sitting: { hipYs: [] },
+      standing: { hipYs: [] },
     };
     let isCalibrating = false;
-    let calibPhase = 'idle'; // 'idle', 'loading', 'sit', 'stand', 'done'
+    let calibPhase = 'idle';
     let calibCollectInterval = null;
 
 
@@ -924,130 +2517,66 @@
 
     /* ================================================================
        CALIBRATION SYSTEM
-       ================================================================
-       Flow:
-       1. Mode selected → startApp() called
-       2. Camera + model loads
-       3. Calibration screen appears
-       4. Step 1: "Please sit naturally" — records for N seconds
-       5. Step 2: "Please stand up" — records for N seconds
-       6. Calculates thresholds as midpoints between sit/stand values
-       7. Shows results → user clicks "Begin"
-       8. Game starts with personalized thresholds
-    */
-
-    // Read current body measurements from one frame
+       ================================================================ */
     function readBodyMeasurements() {
       if (!detector || !video) return null;
-
-      // We'll use a synchronous approach: just read the latest pose
-      // This is called from an interval during calibration
       return new Promise(async (resolve) => {
         try {
           const poses = await detector.estimatePoses(video);
           if (poses.length === 0) { resolve(null); return; }
-
           const kp = poses[0].keypoints;
           const minConf = CONFIG.MIN_CONFIDENCE;
-
           const lH = kp[KP.L_HIP], rH = kp[KP.R_HIP];
-          const lK = kp[KP.L_KNEE], rK = kp[KP.R_KNEE];
-          const lA = kp[KP.L_ANKLE], rA = kp[KP.R_ANKLE];
-          const lS = kp[KP.L_SHOULDER], rS = kp[KP.R_SHOULDER];
-
-          const hipConf  = Math.max(lH.score, rH.score);
-          const kneeConf = Math.max(lK.score, rK.score);
-
-          if (hipConf < minConf || kneeConf < minConf) { resolve(null); return; }
-
+          const hipConf = Math.max(lH.score, rH.score);
+          if (hipConf < minConf) { resolve(null); return; }
           const hipY = (lH.y + rH.y) / 2 / video.videoHeight;
-          const shoulderY = (lS.y + rS.y) / 2 / video.videoHeight;
-          const torsoLength = hipY - shoulderY;
-
-          let kneeAngle = 180;
-          if (lH.score > minConf && lK.score > minConf && lA.score > minConf) {
-            kneeAngle = angleBetweenPoints(lH, lK, lA);
-          } else if (rH.score > minConf && rK.score > minConf && rA.score > minConf) {
-            kneeAngle = angleBetweenPoints(rH, rK, rA);
-          }
-
-          // Also draw skeleton during calibration
           drawSkeleton(kp);
-
-          resolve({ kneeAngle, hipY, torsoLength });
-        } catch (e) {
-          resolve(null);
-        }
+          resolve({ hipY, conf: hipConf });
+        } catch (e) { resolve(null); }
       });
     }
 
-    // Start collecting with STABILITY DETECTION (no timer!)
-    // Watches the body and waits until readings are steady for STABLE_DURATION ms
-    // Also validates that standing is different from sitting
     function waitForStablePose(phase) {
       const target = phase === 'sit' ? calibrationData.sitting : calibrationData.standing;
-      target.kneeAngles = [];
       target.hipYs = [];
-      target.torsoLengths = [];
-
-      // Rolling window for stability check
       const recentReadings = [];
-      const WINDOW_SIZE = 15;           // ~1.5 seconds of readings
-      const STABLE_THRESHOLD_KNEE = 5;  // degrees — readings must vary less than this
-      const STABLE_THRESHOLD_HIP = 0.02; // normalized — hip must not move more than this
-      const STABLE_DURATION = 2000;      // ms — must be stable for this long
+      const WINDOW_SIZE = 6;
+      const STABLE_THRESHOLD_HIP = 0.035;
+      const STABLE_DURATION = 800;
       let stableSince = null;
-
-      // For standing: minimum difference from sitting
-      const MIN_KNEE_DIFF = 10;   // degrees — stand must be at least this much straighter
-      const MIN_HIP_DIFF = 0.03;  // normalized — hips must rise at least this much
+      const MIN_HIP_DIFF = 0.005;  // almost any difference accepted
 
       return new Promise((resolve) => {
         calibCollectInterval = setInterval(async () => {
           const m = await readBodyMeasurements();
           if (!m) {
-            // No body detected — reset stability
             stableSince = null;
             const statusEl = document.getElementById('calibStatus');
-            if (statusEl) statusEl.textContent = 'Move your full body into view…';
+            if (statusEl) statusEl.textContent = 'Move your hips into view…';
             const ringEl = document.getElementById('calibStabilityRing');
             if (ringEl) ringEl.style.borderColor = 'rgba(201,168,76,0.2)';
             return;
           }
-
-          // Add to rolling window
           recentReadings.push(m);
           if (recentReadings.length > WINDOW_SIZE) recentReadings.shift();
-
-          // Update live display
           const liveEl = document.getElementById('calibLive');
-          if (liveEl) liveEl.textContent = 'Knee: ' + Math.round(m.kneeAngle) + '°  |  Hip: ' + m.hipY.toFixed(3);
+          if (liveEl) liveEl.textContent = 'Hip Y: ' + m.hipY.toFixed(3);
 
-          // Check stability: variance of recent readings
           if (recentReadings.length >= WINDOW_SIZE) {
-            const knees = recentReadings.map(r => r.kneeAngle);
             const hips = recentReadings.map(r => r.hipY);
-            const kneeRange = Math.max(...knees) - Math.min(...knees);
             const hipRange = Math.max(...hips) - Math.min(...hips);
+            const isStable = hipRange < STABLE_THRESHOLD_HIP;
 
-            const isStable = kneeRange < STABLE_THRESHOLD_KNEE && hipRange < STABLE_THRESHOLD_HIP;
-
-            // For standing phase: also check it's different from sitting
             let isDifferent = true;
-            if (phase === 'stand' && calibrationData.sitting.kneeAngles.length > 0) {
-              const sitKneeAvg = average(calibrationData.sitting.kneeAngles);
+            if (phase === 'stand' && calibrationData.sitting.hipYs.length > 0) {
               const sitHipAvg = average(calibrationData.sitting.hipYs);
-              const currentKnee = average(knees);
               const currentHip = average(hips);
-              const kneeDiff = currentKnee - sitKneeAvg;
-              const hipDiff = sitHipAvg - currentHip; // hip Y decreases when standing (moves up in frame)
-
-              isDifferent = kneeDiff > MIN_KNEE_DIFF || hipDiff > MIN_HIP_DIFF;
-
+              const hipDiff = sitHipAvg - currentHip;
+              isDifferent = hipDiff > MIN_HIP_DIFF;
               if (!isDifferent) {
                 stableSince = null;
                 const statusEl = document.getElementById('calibStatus');
-                if (statusEl) statusEl.textContent = 'Please stand up more — too similar to sitting';
+                if (statusEl) statusEl.textContent = 'Please stand up more — hips too similar to sitting';
                 const ringEl = document.getElementById('calibStabilityRing');
                 if (ringEl) { ringEl.style.borderColor = '#e8a0b4'; }
                 return;
@@ -1056,34 +2585,24 @@
 
             if (isStable && isDifferent) {
               if (!stableSince) stableSince = Date.now();
-
               const elapsed = Date.now() - stableSince;
               const progress = Math.min(100, (elapsed / STABLE_DURATION) * 100);
-
               const statusEl = document.getElementById('calibStatus');
               if (statusEl) statusEl.textContent = 'Hold steady… ' + Math.round(progress) + '%';
-
-              // Visual ring fill
               const ringEl = document.getElementById('calibStabilityRing');
               if (ringEl) {
                 ringEl.style.borderColor = 'var(--jade)';
                 ringEl.style.boxShadow = '0 0 ' + (progress * 0.2) + 'px var(--jade)';
               }
-
               if (elapsed >= STABLE_DURATION) {
-                // SUCCESS — capture the stable readings
                 clearInterval(calibCollectInterval);
                 const stableReadings = recentReadings.slice(-WINDOW_SIZE);
-                target.kneeAngles = stableReadings.map(r => r.kneeAngle);
                 target.hipYs = stableReadings.map(r => r.hipY);
-                target.torsoLengths = stableReadings.map(r => r.torsoLength);
-
                 const statusEl = document.getElementById('calibStatus');
                 if (statusEl) statusEl.textContent = '✓ Captured!';
                 const ringEl = document.getElementById('calibStabilityRing');
                 if (ringEl) { ringEl.style.borderColor = 'var(--jade)'; ringEl.style.boxShadow = '0 0 20px var(--jade)'; }
-
-                setTimeout(resolve, 600); // brief pause to show success
+                setTimeout(resolve, 600);
               }
             } else {
               stableSince = null;
@@ -1100,111 +2619,92 @@
       });
     }
 
-    // Calculate thresholds from calibration data
     function calculateThresholds() {
       const sit = calibrationData.sitting;
       const stand = calibrationData.standing;
-
-      const sitKnee   = average(sit.kneeAngles);
-      const standKnee = average(stand.kneeAngles);
       const sitHipY   = average(sit.hipYs);
       const standHipY = average(stand.hipYs);
-      const sitTorso  = average(sit.torsoLengths);
-      const standTorso= average(stand.torsoLengths);
-
       const buf = CONFIG.CALIBRATION_BUFFER;
-      const kneeRange = standKnee - sitKnee;
-      CONFIG.STANDING_KNEE_ANGLE = sitKnee + kneeRange * (1 - buf);
-      CONFIG.SITTING_KNEE_ANGLE  = sitKnee + kneeRange * buf;
-      CONFIG.STANDING_TORSO_LENGTH = sitTorso + (standTorso - sitTorso) * 0.5;
+
+      // Hip Y: sitting is higher value (lower in frame), standing is lower value (higher in frame)
+      const hipRange = sitHipY - standHipY;
+      CONFIG.STANDING_HIP_Y = standHipY + hipRange * buf;
+      CONFIG.SITTING_HIP_Y  = sitHipY - hipRange * buf;
 
       return {
-        sitKnee: Math.round(sitKnee),
-        standKnee: Math.round(standKnee),
-        thresholdStandKnee: Math.round(CONFIG.STANDING_KNEE_ANGLE),
-        thresholdSitKnee: Math.round(CONFIG.SITTING_KNEE_ANGLE),
-        thresholdTorso: CONFIG.STANDING_TORSO_LENGTH.toFixed(3),
-        sitSamples: sit.kneeAngles.length,
-        standSamples: stand.kneeAngles.length,
+        sitHipY: sitHipY.toFixed(3),
+        standHipY: standHipY.toFixed(3),
+        thresholdStandHipY: CONFIG.STANDING_HIP_Y.toFixed(3),
+        thresholdSitHipY: CONFIG.SITTING_HIP_Y.toFixed(3),
+        sitSamples: sit.hipYs.length,
+        standSamples: stand.hipYs.length,
       };
     }
 
-    // Run the full calibration flow
     async function runCalibration() {
       const screen = document.getElementById('calibScreen');
       const content = document.getElementById('calibContent');
       screen.classList.remove('hidden');
 
-      // --- STEP 1: SIT ---
       calibPhase = 'sit';
       content.innerHTML = `
         <div class="calib-icon">🪑</div>
         <div class="calib-title">Step 1: Sit Naturally</div>
-        <div class="calib-instruction">
-          Sit comfortably. The ring turns green when you're steady.
-        </div>
+        <div class="calib-instruction">Sit comfortably. The ring turns green when you're steady.</div>
         <div class="calib-countdown" id="calibStabilityRing" style="border-color: rgba(201,168,76,0.2);">
           <div class="calib-countdown-num" style="font-size:28px;">🪑</div>
         </div>
         <div class="calib-progress-text" id="calibStatus">Detecting body… stay in view</div>
         <div class="calib-progress-text" id="calibLive" style="opacity:0.5; font-size:11px;">—</div>
       `;
-
       await waitForStablePose('sit');
 
-      // --- STEP 2: STAND ---
       calibPhase = 'stand';
       content.innerHTML = `
         <div class="calib-icon">🧍</div>
         <div class="calib-title">Step 2: Stand Up</div>
-        <div class="calib-instruction">
-          Rise at your own pace — take as long as you need.<br>
-          Hold your comfortable standing position.
-        </div>
+        <div class="calib-instruction">Rise at your own pace — take as long as you need.<br>Hold your comfortable standing position.</div>
         <div class="calib-countdown" id="calibStabilityRing" style="border-color: rgba(201,168,76,0.2);">
           <div class="calib-countdown-num" style="font-size:28px;">🧍</div>
         </div>
         <div class="calib-progress-text" id="calibStatus">Whenever you're ready…</div>
         <div class="calib-progress-text" id="calibLive" style="opacity:0.5; font-size:11px;">—</div>
       `;
-
       await waitForStablePose('stand');
 
-      // --- STEP 3: RESULTS ---
       calibPhase = 'done';
       const results = calculateThresholds();
-
       content.innerHTML = `
         <div class="calib-icon">✅</div>
         <div class="calib-title">Calibration Complete!</div>
         <div class="calib-instruction">
-          Sit: ${results.sitKnee}° → Stand: ${results.standKnee}°<br>
+          Hip position — Sit: ${results.sitHipY} → Stand: ${results.standHipY}<br>
           Personalized to your body and chair.
         </div>
         <div style="font-size:12px; color:var(--cream-dim); margin-bottom:12px;">
-          Thresholds: standing >${results.thresholdStandKnee}° knee
-          · sitting <${results.thresholdSitKnee}° knee
+          Thresholds: standing hip &lt;${results.thresholdStandHipY}
+          · sitting hip &gt;${results.thresholdSitHipY}
         </div>
         <button class="calib-btn" onclick="finishCalibration()">Begin the Dance 🪷</button>
       `;
-
-      addLog('Calibration complete — personalized', 'success');
-      addLog('Sit: ' + results.sitKnee + '° → Stand: ' + results.standKnee + '°', 'success');
+      addLog('Calibration complete — hip-based', 'success');
+      addLog('Hip: sit ' + results.sitHipY + ' → stand ' + results.standHipY, 'success');
     }
 
     function finishCalibration() {
       document.getElementById('calibScreen').classList.add('hidden');
       isCalibrating = false;
       isRunning = true;
-
-      // Start music
+      sessionStartTime = new Date(); // track session start
       initMusic();
       startMusic();
-
-      // Start challenge timer if needed
-      if (gameMode === 'challenge') startChallengeTimer();
-
-      // Begin detection
+      startRecording(); // begin video capture
+      if (gameMode === 'challenge') {
+        startChallengeTimer();
+      } else {
+        // Show "Session Finished" button for non-timed modes
+        document.getElementById('finishSessionBtn').classList.add('visible');
+      }
       setStatus('Detecting', 'active');
       updateLevelUI();
       detectLoop();
@@ -1343,20 +2843,98 @@
       document.getElementById('levelCard').style.display = (mode === 'free') ? 'none' : 'block';
       document.getElementById('timerCard').style.display = (mode === 'challenge') ? 'block' : 'none';
       document.getElementById('rhythmRing').classList.toggle('show', mode === 'guided');
+
+      // Free Practice defaults to gentler sensitivity for partial raises
+      if (mode === 'free') {
+        sensitivity = 8;
+        document.getElementById('sensitivitySlider').value = 8;
+        document.getElementById('sensitivityVal').textContent = '8';
+      } else {
+        sensitivity = 15;
+        document.getElementById('sensitivitySlider').value = 15;
+        document.getElementById('sensitivityVal').textContent = '15';
+      }
     }
 
-    function backToModes() {
+    function finishSession() {
+      if (!isRunning && !sessionStartTime) return;
+
+      // Capture details before saving
+      const rises = standUpCount;
+      const mode = MODE_INFO[gameMode].label;
+      const level = gameMode === 'guided' ? 'Level ' + (currentLevelIndex + 1) + ' — ' + LEVELS[currentLevelIndex].name : null;
+      const duration = sessionStartTime ? Math.round((Date.now() - sessionStartTime.getTime()) / 1000) : 0;
+      const durationMin = Math.floor(duration / 60);
+      const durationSec = duration % 60;
+      const durationStr = durationMin > 0 ? durationMin + 'm ' + durationSec + 's' : durationSec + 's';
+
+      // Save
+      saveCurrentSession();
+
+      // Stop everything
       isRunning = false;
       stopMusic();
-      if (challengeTimer) { clearInterval(challengeTimer); challengeTimer = null; }
-      standUpCount = 0; levelStands = 0; currentLevelIndex = 0;
-      currentPose = 'unknown'; previousPose = 'unknown'; hipHeightHistory = [];
-      document.getElementById('lotusCount').textContent = '0';
-      document.getElementById('lotusPetals').innerHTML = '';
+      document.getElementById('finishSessionBtn').classList.remove('visible');
+
+      // Show confirmation overlay
+      let detailHTML = '<strong>' + rises + '</strong> graceful rises in <strong>' + durationStr + '</strong><br>';
+      detailHTML += 'Mode: <strong>' + mode + '</strong>';
+      if (level) detailHTML += '<br>Reached: <strong>' + level + '</strong>';
+      document.getElementById('sessionSavedDetail').innerHTML = detailHTML;
+      document.getElementById('sessionSavedOverlay').classList.add('show');
+    }
+
+    function viewProgressAfterSave() {
+      document.getElementById('sessionSavedOverlay').classList.remove('show');
+      resetGameState();
       document.getElementById('modeScreen').classList.remove('hidden');
       document.getElementById('startScreen').style.display = '';
       document.getElementById('levelComplete').classList.remove('show');
       document.getElementById('calibScreen').classList.add('hidden');
+      renderModeAvatarPicker();
+      setStatus('Awaiting', '');
+      setTimeout(() => openProgressReport(), 300);
+    }
+
+    function returnToModesAfterSave() {
+      document.getElementById('sessionSavedOverlay').classList.remove('show');
+      resetGameState();
+      document.getElementById('modeScreen').classList.remove('hidden');
+      document.getElementById('startScreen').style.display = '';
+      document.getElementById('levelComplete').classList.remove('show');
+      document.getElementById('calibScreen').classList.add('hidden');
+      renderModeAvatarPicker();
+      setStatus('Awaiting', '');
+    }
+
+    function resetGameState() {
+      standUpCount = 0; levelStands = 0; currentLevelIndex = 0;
+      currentPose = 'unknown'; previousPose = 'unknown'; hipHeightHistory = [];
+      if (challengeTimer) { clearInterval(challengeTimer); challengeTimer = null; }
+      // Stop recording if still running (e.g. empty session)
+      if (isRecording && mediaRecorder) {
+        try { mediaRecorder.stop(); } catch(e) {}
+        isRecording = false;
+        recordedChunks = [];
+      }
+      document.getElementById('lotusCount').textContent = '0';
+      document.getElementById('lotusPetals').innerHTML = '';
+      resetFreeMode();
+    }
+
+    function backToModes() {
+      // Save current session before going back
+      saveCurrentSession();
+
+      isRunning = false;
+      stopMusic();
+      document.getElementById('finishSessionBtn').classList.remove('visible');
+      resetGameState();
+      document.getElementById('modeScreen').classList.remove('hidden');
+      document.getElementById('startScreen').style.display = '';
+      document.getElementById('levelComplete').classList.remove('show');
+      document.getElementById('calibScreen').classList.add('hidden');
+      renderModeAvatarPicker();
       setStatus('Awaiting', '');
     }
 
@@ -1460,56 +3038,131 @@
           showToast('🏆 Festival complete! ' + standUpCount + ' rises!');
           addLog('Challenge ended — ' + standUpCount + ' rises', 'success');
           playLevelChime();
+          // Auto-save challenge session
+          saveCurrentSession();
         }
       }, 1000);
     }
 
 
     /* ================================================================
+       FREE MODE STATE — tracks resting baseline separately
+       ================================================================ */
+    let freeBaseline = null;        // sitting hip Y captured over first few seconds
+    let freeBaselineSamples = [];   // samples used to build baseline
+    let freeState = 'calibrating';  // 'calibrating', 'settling', 'resting', 'rising'
+    let freeCooldown = 0;           // frames to ignore after a transition
+    const FREE_COOLDOWN_FRAMES = 45; // ~1.5 seconds at 30fps — generous cooldown
+    let freeSettleFrames = 0;       // frames to wait before starting detection
+
+    function resetFreeMode() {
+      freeBaseline = null;
+      freeBaselineSamples = [];
+      freeState = 'calibrating';
+      freeCooldown = 0;
+      freeSettleFrames = 0;
+    }
+
+
+    /* ================================================================
        POSE ANALYSIS
-       ================================================================
-       Uses CONFIG values (which are set by calibration).
-    */
+       ================================================================ */
     function analyzePose(keypoints) {
       const minConf = CONFIG.MIN_CONFIDENCE;
       const lH = keypoints[KP.L_HIP], rH = keypoints[KP.R_HIP];
-      const lK = keypoints[KP.L_KNEE], rK = keypoints[KP.R_KNEE];
-      const lA = keypoints[KP.L_ANKLE], rA = keypoints[KP.R_ANKLE];
-      const lS = keypoints[KP.L_SHOULDER], rS = keypoints[KP.R_SHOULDER];
 
-      const hipConf  = Math.max(lH.score, rH.score);
-      const kneeConf = Math.max(lK.score, rK.score);
-      if (hipConf < minConf || kneeConf < minConf) return { pose: 'unknown', hipY: null, kneeAngle: null, conf: 0 };
+      const hipConf = Math.max(lH.score, rH.score);
+      if (hipConf < minConf) return { pose: 'unknown', hipY: null, conf: 0 };
 
       const hipY = (lH.y + rH.y) / 2 / video.videoHeight;
-      let kneeAngle = 180;
-      if (lH.score > minConf && lK.score > minConf && lA.score > minConf) kneeAngle = angleBetweenPoints(lH, lK, lA);
-      else if (rH.score > minConf && rK.score > minConf && rA.score > minConf) kneeAngle = angleBetweenPoints(rH, rK, rA);
-
-      const shoulderY = (lS.y + rS.y) / 2 / video.videoHeight;
-      const torsoLength = hipY - shoulderY;
 
       hipHeightHistory.push(hipY);
       if (hipHeightHistory.length > CONFIG.HISTORY_SIZE) hipHeightHistory.shift();
 
       let detectedPose = 'unknown';
 
-      // Use calibrated thresholds
-      if (kneeAngle > CONFIG.STANDING_KNEE_ANGLE && torsoLength > CONFIG.STANDING_TORSO_LENGTH) {
-        detectedPose = 'standing';
-      }
-      else if (kneeAngle < CONFIG.SITTING_KNEE_ANGLE) {
-        detectedPose = 'sitting';
-      }
-      else if (hipHeightHistory.length >= 5) {
-        const recentAvg = hipHeightHistory.slice(-3).reduce((a,b)=>a+b,0)/3;
-        const olderAvg  = hipHeightHistory.slice(0,3).reduce((a,b)=>a+b,0)/3;
-        const change = ((olderAvg - recentAvg) / olderAvg) * 100;
-        if (change > sensitivity * CONFIG.HIP_RISE_FACTOR) detectedPose = 'standing';
-        else if (change < -sensitivity * CONFIG.HIP_DROP_FACTOR) detectedPose = 'sitting';
+      if (gameMode === 'free') {
+        // FREE PRACTICE — fixed baseline with settling phase
+        // Phase 1 (calibrating): collect 15 samples quickly to find sitting position
+        // Phase 2 (settling): wait 45 frames (~1.5s) so patient is fully still before detecting
+        // Phase 3 (resting/rising): detect rises relative to the locked baseline
+
+        if (freeCooldown > 0) {
+          freeCooldown--;
+          detectedPose = currentPose; // hold current state during cooldown
+        }
+        else if (freeState === 'calibrating') {
+          freeBaselineSamples.push(hipY);
+          if (freeBaselineSamples.length >= 15) {
+            // Take the highest values (= most "seated") as baseline
+            const sorted = [...freeBaselineSamples].sort((a,b) => b - a);
+            freeBaseline = sorted.slice(0, 8).reduce((a,b)=>a+b,0) / 8;
+            freeState = 'settling';
+            freeSettleFrames = 45; // wait ~1.5s before detecting
+          }
+          detectedPose = 'sitting';
+        }
+        else if (freeState === 'settling') {
+          // Wait for patient to be fully settled before detecting
+          freeSettleFrames--;
+          // Keep updating baseline with current position during settle
+          freeBaseline = freeBaseline * 0.9 + hipY * 0.1;
+          if (freeSettleFrames <= 0) {
+            freeState = 'resting';
+          }
+          detectedPose = 'sitting';
+        }
+        else {
+          // Rise threshold: how much hipY must decrease (= hips rise) to count
+          // sensitivity 8 (default free) → ~0.016
+          // sensitivity 5 (gentle) → ~0.01
+          // sensitivity 15 → ~0.03
+          const riseThreshold = sensitivity * 0.002;
+
+          // Smoothed current position (average of last 5 frames)
+          const smoothLen = Math.min(5, hipHeightHistory.length);
+          const smoothHipY = hipHeightHistory.slice(-smoothLen).reduce((a,b)=>a+b,0) / smoothLen;
+
+          // How far have hips risen from baseline?
+          const riseFromBaseline = freeBaseline - smoothHipY;
+
+          if (freeState === 'resting') {
+            if (riseFromBaseline > riseThreshold) {
+              detectedPose = 'standing';
+            } else {
+              detectedPose = 'sitting';
+              // Very slowly adapt baseline for natural drift
+              freeBaseline = freeBaseline * 0.998 + smoothHipY * 0.002;
+            }
+          }
+          else if (freeState === 'rising') {
+            // Must return to within 25% of rise threshold to count as back to sitting
+            // This wide gap prevents flickering
+            if (riseFromBaseline < riseThreshold * 0.25) {
+              detectedPose = 'sitting';
+            } else {
+              detectedPose = 'standing';
+            }
+          }
+        }
+      } else {
+        // GUIDED / CHALLENGE — use calibrated absolute thresholds
+        if (hipY < CONFIG.STANDING_HIP_Y) {
+          detectedPose = 'standing';
+        }
+        else if (hipY > CONFIG.SITTING_HIP_Y) {
+          detectedPose = 'sitting';
+        }
+        else if (hipHeightHistory.length >= 5) {
+          const recentAvg = hipHeightHistory.slice(-3).reduce((a,b)=>a+b,0)/3;
+          const olderAvg  = hipHeightHistory.slice(0,3).reduce((a,b)=>a+b,0)/3;
+          const change = ((olderAvg - recentAvg) / olderAvg) * 100;
+          if (change > sensitivity * CONFIG.HIP_RISE_FACTOR) detectedPose = 'standing';
+          else if (change < -sensitivity * CONFIG.HIP_DROP_FACTOR) detectedPose = 'sitting';
+        }
       }
 
-      return { pose: detectedPose, hipY, kneeAngle, conf: (hipConf + kneeConf) / 2 };
+      return { pose: detectedPose, hipY, conf: hipConf };
     }
 
 
@@ -1522,6 +3175,18 @@
         poseStableFrames++;
         if (poseStableFrames >= CONFIG.STABLE_FRAMES_NEEDED) {
           previousPose = currentPose; currentPose = newPose; poseStableFrames = 0;
+
+          // Update free mode state machine
+          if (gameMode === 'free' && freeBaseline !== null) {
+            if (currentPose === 'standing' && previousPose === 'sitting') {
+              freeState = 'rising';
+              freeCooldown = FREE_COOLDOWN_FRAMES;
+            } else if (currentPose === 'sitting') {
+              freeState = 'resting';
+              freeCooldown = FREE_COOLDOWN_FRAMES;
+            }
+          }
+
           if (currentPose === 'standing' && previousPose === 'sitting') {
             if (gameMode === 'challenge' && challengeTimeLeft <= 0) return;
             standUpCount++; levelStands++;
@@ -1541,23 +3206,108 @@
        ================================================================ */
     function drawSkeleton(keypoints) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const conn = [[5,6],[5,7],[7,9],[6,8],[8,10],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16]];
       const isSt = currentPose === 'standing';
-      ctx.strokeStyle = isSt ? 'rgba(232,160,180,0.5)' : 'rgba(201,168,76,0.35)';
-      ctx.lineWidth = 2; ctx.lineCap = 'round';
+      const minS = CONFIG.DRAW_MIN_SCORE;
+
+      const nose = keypoints[0];
+      const lSh  = keypoints[KP.L_SHOULDER], rSh = keypoints[KP.R_SHOULDER];
+      const lH   = keypoints[KP.L_HIP], rH = keypoints[KP.R_HIP];
+
+      // Light skeleton lines (subtle, just for reference)
+      const conn = [[5,6],[5,7],[7,9],[6,8],[8,10],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16]];
+      ctx.strokeStyle = isSt ? 'rgba(232,160,180,0.25)' : 'rgba(201,168,76,0.15)';
+      ctx.lineWidth = 1.5; ctx.lineCap = 'round';
       for (const [i,j] of conn) {
-        if (keypoints[i].score > CONFIG.DRAW_MIN_SCORE && keypoints[j].score > CONFIG.DRAW_MIN_SCORE) {
+        if (keypoints[i].score > minS && keypoints[j].score > minS) {
           ctx.beginPath(); ctx.moveTo(keypoints[i].x, keypoints[i].y); ctx.lineTo(keypoints[j].x, keypoints[j].y); ctx.stroke();
         }
       }
-      const dc = isSt ? '#e8a0b4' : '#c9a84c';
-      const gc = isSt ? 'rgba(232,160,180,0.1)' : 'rgba(201,168,76,0.08)';
+
+      // Small joint dots
+      const dc = isSt ? 'rgba(232,160,180,0.4)' : 'rgba(201,168,76,0.2)';
       for (const p of keypoints) {
-        if (p.score > CONFIG.DRAW_MIN_SCORE) {
-          ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2); ctx.fillStyle = dc; ctx.fill();
-          ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fillStyle = gc; ctx.fill();
+        if (p.score > minS) {
+          ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fillStyle = dc; ctx.fill();
         }
       }
+
+      // ---- BIG AVATAR EMOJI HEAD ----
+      if (nose.score > minS) {
+        const shoulderW = (lSh.score > minS && rSh.score > minS) ? Math.abs(rSh.x - lSh.x) : 120;
+        const emojiSize = Math.max(50, shoulderW * 0.55);
+
+        // Glow circle behind avatar
+        const glowR = emojiSize * 0.6;
+        const glow = ctx.createRadialGradient(nose.x, nose.y, 0, nose.x, nose.y, glowR);
+        if (isSt) {
+          glow.addColorStop(0, 'rgba(232,209,139,0.4)');
+          glow.addColorStop(0.5, 'rgba(232,160,180,0.15)');
+          glow.addColorStop(1, 'rgba(0,0,0,0)');
+        } else {
+          glow.addColorStop(0, 'rgba(201,168,76,0.15)');
+          glow.addColorStop(1, 'rgba(0,0,0,0)');
+        }
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(nose.x, nose.y, glowR, 0, Math.PI * 2);
+        ctx.fill();
+
+        // The emoji itself — big and bold
+        ctx.font = emojiSize + 'px serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(currentAvatar, nose.x, nose.y);
+
+        // Gold ring around avatar (brighter when standing)
+        if (isSt) {
+          ctx.strokeStyle = 'rgba(232,209,139,0.7)';
+          ctx.lineWidth = 3;
+          ctx.shadowColor = 'rgba(201,168,76,0.5)';
+          ctx.shadowBlur = 15;
+        } else {
+          ctx.strokeStyle = 'rgba(201,168,76,0.25)';
+          ctx.lineWidth = 2;
+          ctx.shadowColor = 'transparent';
+          ctx.shadowBlur = 0;
+        }
+        ctx.beginPath();
+        ctx.arc(nose.x, nose.y, emojiSize * 0.48, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+      }
+
+      // ---- SPARKLE PARTICLES WHEN STANDING ----
+      if (isSt && nose.score > minS) {
+        spawnAvatarParticle(nose.x, nose.y);
+      }
+    }
+
+    // Avatar particle system
+    let lastParticleTime = 0;
+    function spawnAvatarParticle(cx, cy) {
+      const now = Date.now();
+      if (now - lastParticleTime < 400) return; // throttle
+      lastParticleTime = now;
+
+      const container = document.getElementById('petalContainer');
+      const emojis = ['✨', '⭐', '🪷', '💫', currentAvatar];
+      const p = document.createElement('div');
+      p.className = 'avatar-particle';
+      p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+      // Position relative to the video container
+      const vcRect = document.getElementById('videoContainer').getBoundingClientRect();
+      const vidEl = document.getElementById('video');
+      const scaleX = vcRect.width / (vidEl.videoWidth || 640);
+      const scaleY = vcRect.height / (vidEl.videoHeight || 480);
+
+      p.style.left = (cx * scaleX + (Math.random() - 0.5) * 100) + 'px';
+      p.style.top = (cy * scaleY + (Math.random() - 0.5) * 60) + 'px';
+      p.style.fontSize = (14 + Math.random() * 14) + 'px';
+
+      container.appendChild(p);
+      setTimeout(() => p.remove(), 2200);
     }
 
 
@@ -1572,7 +3322,6 @@
           const kps = poses[0].keypoints;
           const r = analyzePose(kps);
           if (r.hipY !== null) document.getElementById('hipHeight').textContent = r.hipY.toFixed(3);
-          if (r.kneeAngle !== null) document.getElementById('kneeAngle').textContent = Math.round(r.kneeAngle) + '°';
           document.getElementById('confidence').textContent = (r.conf * 100).toFixed(0) + '%';
           handlePoseTransition(r.pose);
           drawSkeleton(kps);
@@ -1587,11 +3336,7 @@
 
     /* ================================================================
        APP STARTUP
-       ================================================================
-       1. Load camera + model
-       2. Run calibration
-       3. Then start game
-    */
+       ================================================================ */
     async function startApp(skipCalibration) {
       const btn = document.getElementById('startBtn');
       btn.disabled = true;
@@ -1599,7 +3344,6 @@
       setStatus('Loading…', '');
 
       try {
-        // 1. Camera
         addLog('Requesting camera…');
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: CONFIG.CAMERA_FACING, width: { ideal: CONFIG.CAMERA_WIDTH }, height: { ideal: CONFIG.CAMERA_HEIGHT } }
@@ -1613,7 +3357,6 @@
         ctx = canvas.getContext('2d');
         addLog('Camera active');
 
-        // 2. Model
         btn.innerHTML = '<span class="loading-spinner"></span> Loading AI…';
         addLog('Loading MoveNet…');
         detector = await poseDetection.createDetector(
@@ -1622,19 +3365,15 @@
         );
         addLog('MoveNet ready', 'success');
 
-        // 3. Hide start screen
         document.getElementById('startScreen').style.display = 'none';
 
         if (skipCalibration) {
-          // Skip calibration — use default CONFIG thresholds
           addLog('Skipped calibration — using defaults', 'success');
           finishCalibration();
         } else {
-          // 4. Run calibration
           setStatus('Calibrating…', '');
           isCalibrating = true;
           await runCalibration();
-          // Game starts when user clicks "Begin the Dance" in calibration screen
         }
 
       } catch(err) {
@@ -1646,6 +3385,383 @@
         if (err.name === 'NotAllowedError') addLog('Camera denied — please allow access');
       }
     }
+
+
+    /* ================================================================
+       WEEKLY LEADERBOARD
+       ================================================================ */
+    function getWeekKey(date) {
+      const d = new Date(date);
+      d.setHours(0,0,0,0);
+      d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+      const week1 = new Date(d.getFullYear(), 0, 4);
+      const weekNum = 1 + Math.round(((d - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+      return d.getFullYear() + '-W' + String(weekNum).padStart(2, '0');
+    }
+
+    function getWeekDates(offset) {
+      // offset: 0 = this week, -1 = last week, etc.
+      const now = new Date();
+      const monday = new Date(now);
+      monday.setDate(now.getDate() - (now.getDay() + 6) % 7 + (offset * 7));
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      return { monday, sunday };
+    }
+
+    function getWeekLabel(offset) {
+      const { monday, sunday } = getWeekDates(offset);
+      const fmt = d => d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+      if (offset === 0) return fmt(monday) + ' — ' + fmt(sunday) + '  (This Week)';
+      return fmt(monday) + ' — ' + fmt(sunday);
+    }
+
+    function getWeekKeyForOffset(offset) {
+      const { monday } = getWeekDates(offset);
+      return getWeekKey(monday);
+    }
+
+    function getWeeklyLeaderboardData(mode, weekKey) {
+      const all = getAllPatientData();
+      const scores = {};
+
+      for (const [name, data] of Object.entries(all)) {
+        if (!data.sessions) continue;
+        const avatar = data.avatar || '🐱';
+        let bestRises = 0;
+        let weekSessions = 0;
+
+        data.sessions.forEach(s => {
+          let sessionDate;
+          if (s.date) {
+            sessionDate = new Date(s.date);
+          } else if (s.dateDisplay) {
+            sessionDate = new Date(s.dateDisplay);
+          } else {
+            return;
+          }
+
+          if (getWeekKey(sessionDate) !== weekKey) return;
+          if (mode !== 'all' && s.mode !== mode) return;
+
+          weekSessions++;
+          const rises = s.totalRises || 0;
+          if (rises > bestRises) bestRises = rises;
+        });
+
+        if (bestRises > 0) {
+          scores[name] = { name, avatar, bestRises, sessions: weekSessions };
+        }
+      }
+
+      return Object.values(scores).sort((a, b) => b.bestRises - a.bestRises);
+    }
+
+    let currentLBMode = 'all';
+    let lbWeekOffset = 0;
+
+    function openLeaderboard() {
+      currentLBMode = 'all';
+      lbWeekOffset = 0;
+      renderLeaderboard();
+      document.getElementById('leaderboardScreen').classList.remove('hidden');
+    }
+
+    function closeLeaderboard() {
+      document.getElementById('leaderboardScreen').classList.add('hidden');
+    }
+
+    function switchLBMode(mode) {
+      currentLBMode = mode;
+      renderLeaderboard();
+    }
+
+    function shiftLeaderboardWeek(dir) {
+      lbWeekOffset += dir;
+      if (lbWeekOffset > 0) lbWeekOffset = 0; // can't go into the future
+      renderLeaderboard();
+    }
+
+    function renderLeaderboard() {
+      document.getElementById('leaderboardWeek').textContent = getWeekLabel(lbWeekOffset);
+      // Disable forward button if on current week
+      const nextBtn = document.getElementById('lbNextBtn');
+      if (nextBtn) {
+        nextBtn.disabled = (lbWeekOffset >= 0);
+        nextBtn.style.opacity = (lbWeekOffset >= 0) ? '0.25' : '1';
+      }
+
+      const weekKey = getWeekKeyForOffset(lbWeekOffset);
+      const data = getWeeklyLeaderboardData(currentLBMode, weekKey);
+      const container = document.getElementById('leaderboardContent');
+
+      const tabs = [
+        { id: 'all', label: '🏆 All Modes' },
+        { id: 'free', label: '🌿 Free Practice' },
+        { id: 'guided', label: '🪷 Guided Dance' },
+        { id: 'challenge', label: '🔥 Challenge' },
+      ];
+
+      let html = '<div class="lb-mode-tabs">';
+      tabs.forEach(t => {
+        html += `<button class="lb-tab ${t.id === currentLBMode ? 'active' : ''}" onclick="switchLBMode('${t.id}')">${t.label}</button>`;
+      });
+      html += '</div>';
+
+      if (data.length === 0) {
+        html += '<div class="lb-empty"><span style="font-size:40px;display:block;margin-bottom:12px;opacity:0.4;">🏆</span>No sessions this week yet. Start dancing!</div>';
+        container.innerHTML = html;
+        return;
+      }
+
+      // Podium (top 3)
+      html += '<div class="lb-podium">';
+      const podiumOrder = data.length >= 3 ? [data[1], data[0], data[2]] : data.length === 2 ? [data[1], data[0]] : [data[0]];
+      const podiumClasses = data.length >= 3 ? ['second', 'first', 'third'] : data.length === 2 ? ['second', 'first'] : ['first'];
+
+      podiumOrder.forEach((p, i) => {
+        const cls = podiumClasses[i];
+        const medal = cls === 'first' ? '🥇' : cls === 'second' ? '🥈' : '🥉';
+        const isMe = p.name === currentPatientName;
+        html += `<div class="lb-podium-item ${cls} ${isMe ? 'highlight' : ''}">
+          <span class="lb-podium-avatar">${p.avatar}</span>
+          <div class="lb-podium-name">${isMe ? '⭐ ' : ''}${p.name}</div>
+          <div class="lb-podium-score">Best: ${p.bestRises} rises · ${p.sessions} sessions</div>
+          <div class="lb-podium-bar">${medal}</div>
+        </div>`;
+      });
+      html += '</div>';
+
+      // Rest of list (4th and beyond)
+      if (data.length > 3) {
+        html += '<div class="lb-rest-list">';
+        for (let i = 3; i < data.length; i++) {
+          const p = data[i];
+          const isMe = p.name === currentPatientName;
+          html += `<div class="lb-row ${isMe ? 'highlight' : ''}">
+            <span class="lb-rank">#${i + 1}</span>
+            <span class="lb-row-avatar">${p.avatar}</span>
+            <span class="lb-row-name">${isMe ? '⭐ ' : ''}${p.name}</span>
+            <span class="lb-row-score">${p.bestRises}</span>
+            <span class="lb-row-label">best</span>
+          </div>`;
+        }
+        html += '</div>';
+      }
+
+      container.innerHTML = html;
+    }
+
+
+    /* ================================================================
+       GOOGLE SHEETS CLOUD SYNC (silent — no UI)
+       ================================================================
+       SETUP: Replace the URL below with your Google Apps Script URL.
+       See the setup guide (SETUP-GUIDE.md) for instructions.
+       Leave empty string to disable cloud sync.
+    */
+    const CLOUD_SYNC_URL = 'https://script.google.com/macros/s/AKfycby3v6qXgKyMc-i8Qp7GnBcX4-CdKtLJmbmuWEtbhtHoHAoCBHqg-WXbN4PqPxBfpTqMTQ/exec';
+    const VIDEO_UPLOAD_URL = 'https://script.google.com/macros/s/AKfycbz9Fv-cPVz0nnfNkCchFlQxxg88GKVVPgV6SF83_v3YBUrmnQmBcx0O-4b-hQ9BpbLT8Q/exec';
+
+
+    /* ================================================================
+       VIDEO RECORDING & UPLOAD (silent)
+       ================================================================ */
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let isRecording = false;
+
+    function startRecording() {
+      if (!VIDEO_UPLOAD_URL) return;
+      try {
+        const videoEl = document.getElementById('video');
+        const stream = videoEl.srcObject;
+        if (!stream) return;
+
+        recordedChunks = [];
+        // Try webm with VP8, fall back to whatever is available
+        const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp8')
+          ? 'video/webm;codecs=vp8' : 'video/webm';
+        mediaRecorder = new MediaRecorder(stream, {
+          mimeType,
+          videoBitsPerSecond: 500000 // 500kbps — decent quality, manageable file size
+        });
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) recordedChunks.push(e.data);
+        };
+
+        mediaRecorder.start(1000); // collect data every 1 second
+        isRecording = true;
+        console.log('Video recording started');
+      } catch(e) {
+        console.log('Video recording not supported:', e);
+      }
+    }
+
+    function stopRecordingAndUpload() {
+      if (!isRecording || !mediaRecorder) return;
+
+      return new Promise((resolve) => {
+        mediaRecorder.onstop = async () => {
+          isRecording = false;
+          if (recordedChunks.length === 0) { resolve(); return; }
+
+          const blob = new Blob(recordedChunks, { type: 'video/webm' });
+          recordedChunks = [];
+
+          // Generate filename: name_date_highestlevel_rises.webm
+          const now = sessionStartTime || new Date();
+          const dateStr = now.toISOString().slice(0, 10);
+          const patientClean = currentPatientName.replace(/\s+/g, '_');
+          const levelStr = (gameMode === 'guided' && currentLevelIndex >= 0)
+            ? 'Lvl' + (currentLevelIndex + 1)
+            : gameMode === 'challenge' ? 'Challenge' : 'Free';
+          const risesStr = standUpCount + 'rises';
+          const filename = patientClean + '_' + dateStr + '_' + levelStr + '_' + risesStr + '.webm';
+
+          console.log('Uploading video: ' + filename + ' (' + (blob.size / 1024 / 1024).toFixed(1) + ' MB)');
+
+          // Convert to base64 and upload
+          try {
+            const reader = new FileReader();
+            reader.onload = async () => {
+              const base64 = reader.result.split(',')[1];
+
+              // Check size — Apps Script limit is ~50MB
+              if (base64.length > 45 * 1024 * 1024) {
+                console.log('Video too large for upload (' + (blob.size / 1024 / 1024).toFixed(1) + ' MB), skipping');
+                resolve();
+                return;
+              }
+
+              try {
+                await fetch(VIDEO_UPLOAD_URL, {
+                  method: 'POST',
+                  redirect: 'follow',
+                  headers: { 'Content-Type': 'text/plain' },
+                  body: JSON.stringify({ filename, video: base64, patient: currentPatientName })
+                });
+                console.log('Video uploaded successfully');
+              } catch(e) {
+                console.log('Video upload failed (offline?):', e);
+              }
+              resolve();
+            };
+            reader.onerror = () => { console.log('Video read error'); resolve(); };
+            reader.readAsDataURL(blob);
+          } catch(e) {
+            console.log('Video processing error:', e);
+            resolve();
+          }
+        };
+
+        try {
+          mediaRecorder.stop();
+        } catch(e) {
+          isRecording = false;
+          resolve();
+        }
+      });
+    }
+
+
+    // Silent write — fires after every session save, fails silently
+    async function syncWriteSession(patientName, session) {
+      if (!CLOUD_SYNC_URL) return;
+      try {
+        await fetch(CLOUD_SYNC_URL + '?action=write', {
+          method: 'POST',
+          redirect: 'follow',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ patient: patientName, sessions: [session] })
+        });
+      } catch(e) {
+        console.log('Cloud sync write failed (offline?) — data safe locally');
+      }
+    }
+
+    // Silent read — pulls cloud sessions and merges with local
+    async function syncLoadPatientSessions(patientName) {
+      if (!CLOUD_SYNC_URL) return null;
+      try {
+        const resp = await fetch(
+          CLOUD_SYNC_URL + '?action=read&patient=' + encodeURIComponent(patientName),
+          { redirect: 'follow' }
+        );
+        const data = await resp.json();
+        if (data.ok) return data.sessions || [];
+      } catch(e) {
+        console.log('Cloud sync read failed (offline?)');
+      }
+      return null;
+    }
+
+    // Silent patient list load — merges cloud patients into local list
+    async function syncLoadPatients() {
+      if (!CLOUD_SYNC_URL) return;
+      try {
+        const resp = await fetch(CLOUD_SYNC_URL + '?action=patients', { redirect: 'follow' });
+        const data = await resp.json();
+        if (data.ok && data.patients) {
+          const local = getAllPatientData();
+          for (const [name, count] of Object.entries(data.patients)) {
+            if (!local[name]) {
+              local[name] = { sessions: [], created: new Date().toISOString() };
+            }
+            local[name].cloudSessions = count;
+          }
+          saveAllPatientData(local);
+          renderRecentPatients();
+        }
+      } catch(e) {}
+    }
+
+    // Override openProgressReport to merge cloud data with robust deduplication
+    const _originalOpenProgressReport = openProgressReport;
+    openProgressReport = async function() {
+      if (CLOUD_SYNC_URL) {
+        const cloudSessions = await syncLoadPatientSessions(currentPatientName);
+        if (cloudSessions && cloudSessions.length > 0) {
+          const local = getPatientSessions(currentPatientName);
+
+          // Fingerprint: mode + totalRises + duration — these never get reformatted by Sheets
+          const makeKey = (s) => (s.mode||s.modeLabel||'') + '|' + (s.totalRises||0) + '|' + (s.duration||0);
+          const localKeys = new Set(local.map(makeKey));
+
+          let merged = [...local];
+          let added = 0;
+          for (const cs of cloudSessions) {
+            if (!localKeys.has(makeKey(cs))) {
+              merged.push(cs);
+              localKeys.add(makeKey(cs)); // prevent cloud duplicates too
+              added++;
+            }
+          }
+
+          if (added > 0) {
+            merged.sort((a, b) => {
+              const da = a.date ? new Date(a.date) : new Date(a.dateDisplay + ' ' + a.timeDisplay);
+              const db = b.date ? new Date(b.date) : new Date(b.dateDisplay + ' ' + b.timeDisplay);
+              return db - da;
+            });
+            const all = getAllPatientData();
+            if (!all[currentPatientName]) all[currentPatientName] = { sessions: [], created: new Date().toISOString() };
+            all[currentPatientName].sessions = merged;
+            saveAllPatientData(all);
+          }
+        }
+      }
+      _originalOpenProgressReport();
+    };
+
+
+    /* ================================================================
+       INIT — show patient screen and load recent patients
+       ================================================================ */
+    renderRecentPatients();
+    syncLoadPatients(); // silently fetch cloud patients in background
+    document.getElementById('patientNameInput').focus();
 
   </script>
 </body>
