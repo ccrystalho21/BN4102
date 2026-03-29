@@ -1285,6 +1285,41 @@
       background: rgba(201, 168, 76, 0.05);
       border-radius: var(--radius);
     }
+
+    /* ================================================================
+       AVATAR HEAD OVERLAY (HTML for cross-browser emoji)
+       ================================================================ */
+    .avatar-head-overlay {
+      position: absolute;
+      z-index: 4;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      display: none;
+      text-align: center;
+      line-height: 1;
+      transition: left 0.08s linear, top 0.08s linear;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+    }
+
+    .avatar-head-overlay.visible { display: block; }
+
+    .avatar-head-overlay.standing {
+      filter: drop-shadow(0 0 20px rgba(232,209,139,0.5)) drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+    }
+
+    .avatar-head-ring {
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 3px solid rgba(201,168,76,0.25);
+      transition: border-color 0.4s, box-shadow 0.4s;
+    }
+
+    .avatar-head-overlay.standing .avatar-head-ring {
+      border-color: rgba(232,209,139,0.7);
+      box-shadow: 0 0 20px rgba(201,168,76,0.4);
+    }
+
     .avatar-particle {
       position: absolute;
       pointer-events: none;
@@ -2035,6 +2070,7 @@
         <video id="video" autoplay playsinline muted></video>
         <canvas id="overlay"></canvas>
         <div class="petal-container" id="petalContainer"></div>
+        <div class="avatar-head-overlay" id="avatarHeadOverlay"></div>
         <div class="dance-prompt" id="dancePrompt"></div>
         <div class="rhythm-ring" id="rhythmRing">🪷</div>
         <!-- Calibration overlay (inside video so you can see yourself) -->
@@ -3591,50 +3627,51 @@
         }
       }
 
-      // ---- BIG AVATAR EMOJI HEAD ----
+      // ---- AVATAR HEAD (HTML overlay — works on all browsers) ----
+      const avatarEl = document.getElementById('avatarHeadOverlay');
       if (nose.score > minS) {
         const shoulderW = (lSh.score > minS && rSh.score > minS) ? Math.abs(rSh.x - lSh.x) : 120;
         const emojiSize = Math.max(50, shoulderW * 0.55);
 
-        // Glow circle behind avatar
+        // Convert canvas coords to video container percentage
+        const vidEl = document.getElementById('video');
+        const vw = vidEl.videoWidth || 640;
+        const vh = vidEl.videoHeight || 480;
+        const pctX = (nose.x / vw) * 100;
+        const pctY = (nose.y / vh) * 100;
+
+        avatarEl.style.left = pctX + '%';
+        avatarEl.style.top = pctY + '%';
+        avatarEl.style.fontSize = emojiSize + 'px';
+        avatarEl.style.width = emojiSize + 'px';
+        avatarEl.style.height = emojiSize + 'px';
+
+        // Update content if changed
+        if (!avatarEl.dataset.avatar || avatarEl.dataset.avatar !== currentAvatar) {
+          avatarEl.innerHTML = currentAvatar + '<div class="avatar-head-ring"></div>';
+          avatarEl.dataset.avatar = currentAvatar;
+        }
+
+        avatarEl.classList.add('visible');
+        avatarEl.classList.toggle('standing', isSt);
+
+        // Draw glow on canvas behind the overlay
         const glowR = emojiSize * 0.6;
         const glow = ctx.createRadialGradient(nose.x, nose.y, 0, nose.x, nose.y, glowR);
         if (isSt) {
-          glow.addColorStop(0, 'rgba(232,209,139,0.4)');
-          glow.addColorStop(0.5, 'rgba(232,160,180,0.15)');
+          glow.addColorStop(0, 'rgba(232,209,139,0.35)');
+          glow.addColorStop(0.5, 'rgba(232,160,180,0.12)');
           glow.addColorStop(1, 'rgba(0,0,0,0)');
         } else {
-          glow.addColorStop(0, 'rgba(201,168,76,0.15)');
+          glow.addColorStop(0, 'rgba(201,168,76,0.12)');
           glow.addColorStop(1, 'rgba(0,0,0,0)');
         }
         ctx.fillStyle = glow;
         ctx.beginPath();
         ctx.arc(nose.x, nose.y, glowR, 0, Math.PI * 2);
         ctx.fill();
-
-        // The emoji itself — big and bold
-        ctx.font = emojiSize + 'px serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(currentAvatar, nose.x, nose.y);
-
-        // Gold ring around avatar (brighter when standing)
-        if (isSt) {
-          ctx.strokeStyle = 'rgba(232,209,139,0.7)';
-          ctx.lineWidth = 3;
-          ctx.shadowColor = 'rgba(201,168,76,0.5)';
-          ctx.shadowBlur = 15;
-        } else {
-          ctx.strokeStyle = 'rgba(201,168,76,0.25)';
-          ctx.lineWidth = 2;
-          ctx.shadowColor = 'transparent';
-          ctx.shadowBlur = 0;
-        }
-        ctx.beginPath();
-        ctx.arc(nose.x, nose.y, emojiSize * 0.48, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.shadowColor = 'transparent';
-        ctx.shadowBlur = 0;
+      } else {
+        avatarEl.classList.remove('visible');
       }
 
       // ---- SPARKLE PARTICLES WHEN STANDING ----
